@@ -1,11 +1,12 @@
 (()=>{const S=window.SITE,page=(location.pathname.split("/").pop()||"index.html").split("?")[0];
 document.querySelectorAll("[data-brand]").forEach(e=>e.textContent=S.BRAND_NAME);
 if(document.title.includes("BRAND_NAME"))document.title=document.title.replace(/BRAND_NAME/g,S.BRAND_NAME);
-const links=S.nav.map(([h,t],i)=>`<li><a class="nl" href="${h}"${h===page?' aria-current="page"':""}>${t}</a></li>`).join("");
+const navNoDemo=S.nav.filter(([h])=>h!=="demo.html");
+const links=navNoDemo.map(([h,t],i)=>`<li><a class="nl" href="${h}"${h===page?' aria-current="page"':""}>${t}</a></li>`).join("");
 const hd=document.getElementById("site-header");
 if(hd){hd.innerHTML=`<div class="wrap hd-in"><a class="logo" href="index.html"><span class="logo-mark">◈</span><span>${S.BRAND_NAME}</span></a><nav aria-label="Main"><ul class="desk">${links}<li><a class="btn sm p" data-cursor="TRY DEMO" href="demo.html">Demo Lab</a></li></ul><button class="btn sm burger" aria-expanded="false" aria-controls="mmenu">Menu</button></nav></div>`;
 const mm=document.createElement("div");mm.className="mmenu";mm.id="mmenu";
-mm.innerHTML=S.nav.map(([h,t],i)=>`<a class="big" href="${h}"><span>0${i+1}</span>${t}</a>`).join("")+`<p style="margin-top:1.2rem"><a class="btn p" href="contact.html?type=quote">Request a quote</a></p>`;
+mm.innerHTML=navNoDemo.map(([h,t],i)=>`<a class="big" href="${h}"><span>0${i+1}</span>${t}</a>`).join("")+`<a class="big" href="demo.html"><span>0${navNoDemo.length+1}</span>Demo Lab</a>`+`<p style="margin-top:1.2rem;display:flex;gap:.6rem;flex-wrap:wrap"><a class="btn p" href="demo.html">Demo Lab</a><a class="btn" href="contact.html?type=quote">Request a quote</a></p>`;
 document.body.appendChild(mm);
 const b=hd.querySelector(".burger");
 b.addEventListener("click",()=>{const o=mm.classList.toggle("open");b.setAttribute("aria-expanded",o);b.textContent=o?"Close":"Menu"});mm.addEventListener("click",e=>{if(e.target.closest("a")){mm.classList.remove("open");b.textContent="Menu"}});}
