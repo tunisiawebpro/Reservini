@@ -1,198 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FAQ | NovaFlow</title>
-  <link rel="stylesheet" href="css/style.css?v=3">
-  <link rel="stylesheet" href="css/pages.css?v=3">
-</head>
-<body>
-  <header class="header">
-    <div class="container">
-      <a href="index.html" class="logo">
-        <div class="logo-icon">NF</div>
-        <span>NovaFlow</span>
-      </a>
-      <nav>
-        <ul class="nav-links" id="nav-links">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="product.html">Product</a></li>
-          <li><a href="how-it-works.html">How It Works</a></li>
-          <li><a href="solutions.html">Solutions</a></li>
-          <li><a href="demo.html">Demo</a></li>
-          <li><a href="pricing.html">Pricing</a></li>
-          <li><a href="faq.html">FAQ</a></li>
-          <li><a href="contact.html">Contact</a></li>
-        </ul>
-      </nav>
-      <div class="nav-actions">
-        <a href="pricing.html" class="btn btn-primary btn-sm">Get Started</a>
-        <button class="mobile-menu-btn" aria-label="Open menu" aria-expanded="false">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      </div>
-    </div>
-  </header>
-  <main>
-    <section class="section">
-      <div class="container">
-        <div class="faq-container">
-          <div class="section-header text-center">
-            <h2>Frequently Asked Questions</h2>
-            <p>Everything you need to know about NovaFlow.</p>
-          </div>
-          <div class="faq-search">
-            <input type="text" placeholder="Search questions..." id="faq-search">
-          </div>
-          <div class="faq-categories">
-            <button class="faq-category-btn active" data-category="all">All</button>
-            <button class="faq-category-btn" data-category="billing">Billing</button>
-            <button class="faq-category-btn" data-category="features">Features</button>
-            <button class="faq-category-btn" data-category="security">Security</button>
-          </div>
-          <div class="accordion" id="faq-list">
-            <div class="accordion-item" data-category="billing">
-              <button class="accordion-button" aria-expanded="false">
-                <h3>What payment methods do you accept?</h3>
-                <span class="accordion-icon">+</span>
-              </button>
-              <div class="accordion-content">
-                <p>We accept all major credit cards (Visa, MasterCard, American Express) and PayPal. Enterprise plans can be invoiced annually.</p>
-              </div>
-            </div>
-            <div class="accordion-item" data-category="features">
-              <button class="accordion-button" aria-expanded="false">
-                <h3>Can I change my plan later?</h3>
-                <span class="accordion-icon">+</span>
-              </button>
-              <div class="accordion-content">
-                <p>Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately, and prorated credits apply for downgrades.</p>
-              </div>
-            </div>
-            <div class="accordion-item" data-category="security">
-              <button class="accordion-button" aria-expanded="false">
-                <h3>Is my data secure?</h3>
-                <span class="accordion-icon">+</span>
-              </button>
-              <div class="accordion-content">
-                <p>Absolutely. We use end-to-end encryption, SOC 2 compliant infrastructure, and regular security audits to protect your data.</p>
-              </div>
-            </div>
-            <div class="accordion-item" data-category="billing">
-              <button class="accordion-button" aria-expanded="false">
-                <h3>Is there a free trial?</h3>
-                <span class="accordion-icon">+</span>
-              </button>
-              <div class="accordion-content">
-                <p>Yes! All plans come with a 14-day free trial. No credit card required to get started.</p>
-              </div>
-            </div>
-            <div class="accordion-item" data-category="features">
-              <button class="accordion-button" aria-expanded="false">
-                <h3>Do you offer integrations?</h3>
-                <span class="accordion-icon">+</span>
-              </button>
-              <div class="accordion-content">
-                <p>Yes, NovaFlow integrates with Slack, GitHub, Google Workspace, Jira, Trello, and over 50 other tools.</p>
-              </div>
-            </div>
-            <div class="accordion-item" data-category="security">
-              <button class="accordion-button" aria-expanded="false">
-                <h3>Can I export my data?</h3>
-                <span class="accordion-icon">+</span>
-              </button>
-              <div class="accordion-content">
-                <p>Yes, you can export all your data at any time in CSV or JSON format from your account settings.</p>
-              </div>
-            </div>
-            <div class="accordion-item" data-category="billing">
-              <button class="accordion-button" aria-expanded="false">
-                <h3>What is your cancellation policy?</h3>
-                <span class="accordion-icon">+</span>
-              </button>
-              <div class="accordion-content">
-                <p>You can cancel your subscription at any time. You'll retain access until the end of your billing period.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-brand">
-          <a href="index.html" class="logo">
-            <div class="logo-icon">NF</div>
-            <span>NovaFlow</span>
-          </a>
-          <p>Helping teams work smarter, not harder.</p>
-        </div>
-        <div class="footer-links">
-          <h4>Product</h4>
-          <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="product.html">Product</a></li>
-            <li><a href="pricing.html">Pricing</a></li>
-          </ul>
-        </div>
-        <div class="footer-links">
-          <h4>Company</h4>
-          <ul>
-            <li><a href="contact.html">Contact</a></li>
-          </ul>
-        </div>
-        <div class="footer-links">
-          <h4>Legal</h4>
-          <ul>
-            <li><a href="privacy-policy.html">Privacy Policy</a></li>
-            <li><a href="terms.html">Terms</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2026 NovaFlow. All rights reserved.</p>
-        <p><a href="privacy-policy.html">Privacy</a> &bull; <a href="terms.html">Terms</a></p>
-      </div>
-    </div>
-  </footer>
-
-  <script src="js/components.js"></script>
-  <script src="js/main.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const searchInput = document.getElementById('faq-search');
-      const categoryBtns = document.querySelectorAll('.faq-category-btn');
-      const items = document.querySelectorAll('.accordion-item');
-
-      function filter() {
-        const term = searchInput.value.toLowerCase();
-        const activeCat = document.querySelector('.faq-category-btn.active')?.getAttribute('data-category') || 'all';
-
-        items.forEach((item) => {
-          const text = item.textContent.toLowerCase();
-          const cat = item.getAttribute('data-category');
-          const match = text.includes(term) && (activeCat === 'all' || cat === activeCat);
-          item.style.display = match ? '' : 'none';
-        });
-      }
-
-      searchInput.addEventListener('input', filter);
-
-      categoryBtns.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          categoryBtns.forEach((b) => b.classList.remove('active'));
-          btn.classList.add('active');
-          filter();
-        });
-      });
-    });
-  </script>
-</body>
-</html>
-
-
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title data-i18n="pg.faq.t">FAQ | Reservini</title><meta name="description" content="Answers about the card, NFC, QR, ordering and pricing.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Crect width='8' height='8' rx='2' fill='%23D5FF45'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/style.css"><noscript><style>.rv,.rv-l,.rv-r,.rv-s,.stag>*{opacity:1!important;transform:none!important}</style></noscript></head><body class="hero-pad">
+<header id="site-header"></header><main>
+<section class="wrap page-hero" style="padding-bottom:0"><span class="idx">FAQ · straight answers</span><h1 data-i18n="faq.h1">Asked at<br>every <span style="color:var(--lime)">table.</span></h1></section>
+<section class="wrap prose">
+<h2>Product and NFC/QR</h2>
+<details open><summary>How does a guest use the card?</summary><p>By tapping an NFC-capable phone on it, or scanning the QR code with any camera. Both open the same page — no app.</p></details>
+<details><summary>Does it need an app or battery?</summary><p>No. The card is passive: an NFC antenna plus print. The guest only needs a browser.</p></details>
+<details><summary>What if a phone has no NFC?</summary><p>The QR back covers it — same URL, same menu, same reviews.</p></details>
+<h2>Customization</h2>
+<details><summary>Can the card carry our branding?</summary><p>Yes — logo, colours, table numbers. Proofs are approved before any print run; details live in your quote.</p></details>
+<details><summary>Can we update the menu later?</summary><p>Yes. The digital page updates centrally; every table follows without reprinting.</p></details>
+<h2>Ordering</h2>
+<details><summary>Can guests order from the table?</summary><p>Ordering is an optional module, offered only where explicitly agreed. The Demo Lab simulates it with fictional data — no real orders are sent.</p></details>
+<h2>Pricing and support</h2>
+<details><summary>How much does it cost?</summary><p>Pricing is on quotation (sur devis) — tables, finishes and modules decide. <a href="contact.html?type=quote">Ask here</a>.</p></details>
+<details><summary>Who do I contact for help?</summary><p>Use the <a href="contact.html">contact page</a> — we reply by email.</p></details>
+<p style="margin-top:1.6rem"><a class="btn p" data-cursor="TRY DEMO" href="demo.html">See it live in the Demo Lab →</a></p>
+</section>
+</main><footer id="site-footer"></footer>
+<script src="js/config.js"></script><script src="js/i18n.js"></script><script src="js/main.js"></script></body></html>
