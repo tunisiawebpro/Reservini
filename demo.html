@@ -8,21 +8,21 @@
 <h1 data-i18n="demo.h1">Order like<br>you're <span style="color:var(--lime)">already seated.</span></h1>
 <p class="lead" data-i18n="demo.lead">A fictional café and restaurant live inside the phone. Add dishes, place a demo order, watch the staff preview. Nothing real is sent.</p>
 <div style="display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;margin-top:1rem">
-<div class="tabs" id="scn" style="max-width:340px;flex:1;min-width:240px"><button data-s="cafe" class="on">☕ Café demo</button><button data-s="resto">🍽 Restaurant demo</button></div>
-<label style="margin:0;font-size:.85rem">Table <select id="tableSel" style="width:auto;display:inline-block;margin-left:.4rem;padding:.5rem .8rem"><option>Table 05</option></select></label>
+<div class="tabs" id="scn" style="max-width:340px;flex:1;min-width:240px"><button data-s="cafe" class="on" data-i18n="demo.tab.cafe">☕ Café demo</button><button data-s="resto" data-i18n="demo.tab.resto">🍽 Restaurant demo</button></div>
+<label style="margin:0;font-size:.85rem" data-i18n="demo.table.label">Table <select id="tableSel" style="width:auto;display:inline-block;margin-left:.4rem;padding:.5rem .8rem"><option data-i18n="demo.table.option">Table 05</option></select></label>
 <button class="btn sm" id="resetDemo" data-i18n="demo.reset">↺ Reset demo</button>
 </div>
-<p class="note" style="margin-top:1.2rem">◈ DEMO MODE — fictional venues, fictional prices in DT. The notification slides <b>inside the phone</b>; the staff panel is a simulation on this same page.</p>
+<p class="note" style="margin-top:1.2rem" data-i18n="demo.note">◈ DEMO MODE — fictional venues, fictional prices in DT. The notification slides <b>inside the phone</b>; the staff panel is a simulation on this same page.</p>
 </section>
 <div class="demo">
 <div class="pm rv-l" id="pm" aria-label="Simulated smartphone with restaurant menu"></div>
 <aside class="rv-r"><div class="staff" id="staff" hidden aria-live="polite"></div>
-<p id="hint" class="note">Add items → open Cart → Place Demo Order. The staff ticket appears here with the same reference, table and total.</p>
+<p id="hint" class="note" data-i18n="demo.hint">Add items → open Cart → Place Demo Order. The staff ticket appears here with the same reference, table and total.</p>
 <div style="margin-top:1.2rem;border:1px solid var(--line);border-radius:16px;padding:1.3rem;background:var(--char)">
-<h3>What the real product could support</h3>
-<ul style="color:var(--mute);margin:.7rem 0 .7rem 1.1rem;font-size:.93rem"><li>Live menu editing without reprints</li><li>Table numbers attached to every order</li><li>Staff statuses: received → preparing → ready</li><li>Review prompt at the right moment</li></ul>
-<p style="color:var(--mute);font-size:.88rem">Ordering is an optional module, enabled only where explicitly agreed. Today it is a frontend simulation.</p>
-<p style="margin-top:.9rem"><a class="btn p sm" href="contact.html?type=demo">Request a live demonstration →</a></p>
+<h3 data-i18n="demo.support.title">What the real product could support</h3>
+<ul style="color:var(--mute);margin:.7rem 0 .7rem 1.1rem;font-size:.93rem"><li data-i18n="demo.support.item1">Live menu editing without reprints</li><li data-i18n="demo.support.item2">Table numbers attached to every order</li><li data-i18n="demo.support.item3">Staff statuses: received → preparing → ready</li><li data-i18n="demo.support.item4">Review prompt at the right moment</li></ul>
+<p style="color:var(--mute);font-size:.88rem" data-i18n="demo.support.note">Ordering is an optional module, enabled only where explicitly agreed. Today it is a frontend simulation.</p>
+<p style="margin-top:.9rem"><a class="btn p sm" href="contact.html?type=demo" data-i18n="demo.support.cta">Request a live demonstration →</a></p>
 </div></aside>
 </div>
 </main><footer id="site-footer"></footer>

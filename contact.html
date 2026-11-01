@@ -6,21 +6,21 @@
 <main class="wrap" style="padding-bottom:5rem;max-width:860px">
 <section class="page-hero" style="padding-left:0;padding-right:0"><span class="idx">Contact · reply by email</span><span class="kicker" data-i18n="contact.k">Quote or demo</span>
 <h1 data-i18n="contact.h1">Tell us about<br>your <span style="color:var(--lime)">venue.</span></h1>
-<p class="lead">Fields glow on focus, errors explain themselves. No backend yet — we say so.</p></section>
+<p class="lead" data-i18n="contact.lead">Fields glow on focus, errors explain themselves. No backend yet — we say so.</p></section>
 <form id="f" novalidate class="rv in" style="background:var(--char);border:1px solid var(--line);border-radius:20px;padding:clamp(1.4rem,3vw,2.4rem)">
-<label for="req">I would like</label><select id="req"><option value="quote">A quotation</option><option value="demo">A demonstration</option></select>
+<label for="req" data-i18n="contact.form.req.label">I would like</label><select id="req"><option value="quote" data-i18n="contact.form.req.quote">A quotation</option><option value="demo" data-i18n="contact.form.req.demo">A demonstration</option></select>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-<div><label for="name">Full name</label><input id="name" autocomplete="name" placeholder="Yasmine Ben Ali"><div class="err" id="e-name"></div></div>
-<div><label for="biz">Business name</label><input id="biz" placeholder="Café Lumière"><div class="err" id="e-biz"></div></div>
+<div><label for="name" data-i18n="contact.form.name.label">Full name</label><input id="name" autocomplete="name" placeholder="Yasmine Ben Ali"><div class="err" id="e-name"></div></div>
+<div><label for="biz" data-i18n="contact.form.biz.label">Business name</label><input id="biz" placeholder="Café Lumière"><div class="err" id="e-biz"></div></div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-<div><label for="type">Business type</label><select id="type"><option>Café</option><option>Restaurant</option><option>Tea room</option><option>Fast food</option></select></div>
-<div><label for="qty">Approximate number of cards</label><input id="qty" type="number" min="1" placeholder="12"><div class="err" id="e-qty"></div></div>
+<div><label for="type" data-i18n="contact.form.type.label">Business type</label><select id="type"><option data-i18n="contact.form.type.cafe">Café</option><option data-i18n="contact.form.type.restaurant">Restaurant</option><option data-i18n="contact.form.type.tea">Tea room</option><option data-i18n="contact.form.type.fast">Fast food</option></select></div>
+<div><label for="qty" data-i18n="contact.form.qty.label">Approximate number of cards</label><input id="qty" type="number" min="1" placeholder="12"><div class="err" id="e-qty"></div></div>
 </div>
-<label for="email">Email</label><input id="email" type="email" autocomplete="email" placeholder="you@venue.tn"><div class="err" id="e-email"></div>
-<label for="phone">Phone (optional)</label><input id="phone" type="tel" placeholder="+216 …">
-<label for="msg">Message</label><textarea id="msg" rows="4" placeholder="Tables, opening date, what should the card say?"></textarea>
-<p style="margin-top:1.2rem"><button class="btn p" type="submit">Send request →</button></p>
+<label for="email" data-i18n="contact.form.email.label">Email</label><input id="email" type="email" autocomplete="email" placeholder="you@venue.tn"><div class="err" id="e-email"></div>
+<label for="phone" data-i18n="contact.form.phone.label">Phone (optional)</label><input id="phone" type="tel" placeholder="+216 …">
+<label for="msg" data-i18n="contact.form.msg.label">Message</label><textarea id="msg" rows="4" placeholder="Tables, opening date, what should the card say?"></textarea>
+<p style="margin-top:1.2rem"><button class="btn p" type="submit" data-i18n="contact.form.submit">Send request →</button></p>
 </form>
 <div id="ok" hidden class="note" role="status"></div>
 </main><footer id="site-footer"></footer>
