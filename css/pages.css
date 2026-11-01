@@ -1,0 +1,8 @@
+/* ==========================================================================
+   NOVAFLOW — Page-specific overrides
+   ========================================================================== */
+
+/* Utility: hide cart badge globally if needed */
+.nav-cart-badge { display: none !important; }
+
+/* Page-specific tweaks can go here */
