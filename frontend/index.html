@@ -1774,6 +1774,7 @@
     // ============================================
     async function loadProducts() {
       const grid = document.getElementById('productsGrid');
+      if (!grid) return;
       
       try {
         const res = await fetch(`${API_BASE_URL}/products`);
