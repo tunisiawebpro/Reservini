@@ -62,6 +62,38 @@ async function main() {
   ]);
 
   console.log(`✅ Created ${products.length} products`);
+
+  const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const adminPassword = process.env.ADMIN_PASSWORD;
+
+  if (adminEmail || adminPassword) {
+    if (!adminEmail || !adminPassword) {
+      throw new Error('Set both ADMIN_EMAIL and ADMIN_PASSWORD to seed an admin account.');
+    }
+
+    const existingAdmin = await prisma.user.findUnique({ where: { email: adminEmail } });
+    if (existingAdmin) {
+      await prisma.user.update({
+        where: { id: existingAdmin.id },
+        data: { role: 'ADMIN' }
+      });
+    } else {
+      const username = process.env.ADMIN_USERNAME?.trim() || adminEmail.split('@')[0];
+      await prisma.user.create({
+        data: {
+          email: adminEmail,
+          username,
+          passwordHash: await bcrypt.hash(adminPassword, 12),
+          role: 'ADMIN',
+          profile: { create: { businessName: 'Reservini Admin' } }
+        }
+      });
+    }
+
+    console.log(`✅ Admin account ready: ${adminEmail}`);
+  } else {
+    console.log('ℹ️ Admin not seeded; set ADMIN_EMAIL and ADMIN_PASSWORD to create or promote one.');
+  }
 }
 
 main()
@@ -72,23 +104,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-
-  // Créer un admin par défaut
-const adminPassword = await bcrypt.hash('admin123', 12);
-await prisma.user.upsert({
-  where: { email: 'admin@reservini.com' },
-  update: {},
-  create: {
-    email: 'admin@reservini.com',
-    username: 'admin',
-    passwordHash: adminPassword,
-    role: 'ADMIN',
-    profile: {
-      create: {
-        businessName: 'Reservini Admin',
-        phone: '+21600000000'
-      }
-    }
-  }
-});
-console.log('✅ Admin créé: admin@reservini.com / admin123');

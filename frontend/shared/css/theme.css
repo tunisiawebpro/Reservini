@@ -514,3 +514,103 @@ h1, h2, h3, h4 {
     text-align: center;
   }
 }
+
+@media (max-width: 968px) {
+  body .dashboard-layout,
+  body .admin-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body .sidebar,
+  body .admin-sidebar {
+    position: static;
+    top: auto;
+  }
+
+  body .admin-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  body .admin-nav-btn {
+    flex: 1 1 9rem;
+  }
+
+  body .data-table-container {
+    overflow-x: auto;
+  }
+
+  body .data-table-container table {
+    min-width: 620px;
+  }
+
+  body .admin-main,
+  body .main-content,
+  body .checkout-layout > *,
+  body .dashboard-layout > *,
+  body .admin-layout > * {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  body .container,
+  body .nav-inner {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  body .dashboard-layout,
+  body .admin-layout,
+  body .products-grid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  body .main-content,
+  body .admin-login,
+  body .auth-card,
+  body .reset-card {
+    padding: 1.25rem;
+  }
+
+  body .auth-page,
+  body .reset-page {
+    padding: 100px 1rem 1rem;
+  }
+
+  body .form-options,
+  body .table-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  body .form-row,
+  body [style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  body .order-item-row,
+  body .order-total-row {
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  body .data-table-container {
+    overflow-x: auto;
+  }
+
+  body .nav-links.mobile-open {
+    max-height: calc(100dvh - 5rem);
+    overflow-y: auto;
+  }
+
+  body input,
+  body select,
+  body textarea,
+  body button {
+    max-width: 100%;
+  }
+}

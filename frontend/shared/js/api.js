@@ -1,5 +1,4 @@
-// frontend/js/api.js
-const API_BASE_URL = import.meta.env?.VITE_API_URL || 'https://slide-stomach-trustee-any.trycloudflare.com/api/v1';
+import { API_BASE_URL } from './config.js';
 
 async function fetchAPI(endpoint, options = {}) {
   const defaultOptions = {

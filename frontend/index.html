@@ -1713,8 +1713,7 @@
 
   <script type="module">
     import { initApp, auth } from '/shared/js/app.js';
-    
-    const API_URL = 'https://slide-stomach-trustee-any.trycloudflare.com/api/v1';
+    import { API_BASE_URL } from '/shared/js/config.js';
     
     // Initialize shared app
     initApp();
@@ -1777,7 +1776,7 @@
       const grid = document.getElementById('productsGrid');
       
       try {
-        const res = await fetch(`${API_URL}/products`);
+        const res = await fetch(`${API_BASE_URL}/products`);
         const data = await res.json();
         
         if (!data.products || data.products.length === 0) {

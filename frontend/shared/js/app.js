@@ -2,7 +2,7 @@
 // RESERVINI — SHARED APP LOGIC
 // ============================================
 
-const API_URL = 'http://127.0.0.1:5000/api/v1';
+import { API_BASE_URL } from './config.js';
 
 // ============================================
 // AUTH STATE
@@ -31,7 +31,7 @@ export const auth = {
     };
     if (token) headers['Authorization'] = `Bearer ${token}`;
     
-    const res = await fetch(`${API_URL}${endpoint}`, { ...options, headers });
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, { ...options, headers });
     
     const contentType = res.headers.get('content-type');
     if (contentType && contentType.includes('application/json')) {

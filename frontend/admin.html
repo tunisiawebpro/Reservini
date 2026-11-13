@@ -283,9 +283,8 @@
 
   <script type="module">
     import { initApp, auth } from '/shared/js/app.js';
+    import { API_BASE_URL } from '/shared/js/config.js';
     import { showToast } from '/shared/js/toast.js';
-    
-    const API_URL = 'http://127.0.0.1:5000/api/v1';
     
     // 1. Check if admin
     const user = await auth.checkStatus();
@@ -302,7 +301,7 @@
       const errorDiv = document.getElementById('loginError');
       
       try {
-        const res = await fetch(`${API_URL}/auth/login`, {
+        const res = await fetch(`${API_BASE_URL}/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })

@@ -394,6 +394,7 @@
 
   <script type="module">
     import { initApp, auth } from '/shared/js/app.js';
+    import { API_BASE_URL } from '/shared/js/config.js';
     import { showToast } from '/shared/js/toast.js';
     
     // 1. Auth Check
@@ -610,7 +611,7 @@ if (checkoutForm) {
       console.log("📦 DEBUG FRONTEND - Payload envoyé au backend :", payload);
 
       // 3. Envoyer la requête
-      const res = await fetch('http://127.0.0.1:5000/api/v1/checkout', { // Adapte l'URL si c'est /orders
+      const res = await fetch(`${API_BASE_URL}/orders/checkout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

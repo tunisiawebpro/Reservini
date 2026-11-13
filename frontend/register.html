@@ -98,11 +98,11 @@
 
   <script type="module">
     import { initApp, auth } from '/shared/js/app.js';
+    import { API_BASE_URL } from '/shared/js/config.js';
     initApp();
     
     if (auth.isLoggedIn()) window.location.href = '/index.html';
     
-    const API_URL = 'http://127.0.0.1:5000/api/v1';
     const form = document.getElementById('registerForm');
     const message = document.getElementById('authMessage');
     const submitBtn = document.getElementById('submitBtn');
@@ -125,7 +125,7 @@
       submitBtn.textContent = 'Création...';
       
       try {
-        const res = await fetch(`${API_URL}/auth/register`, {
+        const res = await fetch(`${API_BASE_URL}/auth/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
