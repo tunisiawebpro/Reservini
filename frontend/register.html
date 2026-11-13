@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription · Reservini</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/css/theme.css">
+  
+  <style>
+    .auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 120px var(--space-xl) var(--space-xl); position: relative; }
+    .auth-page::before { content: ''; position: absolute; top: 20%; right: 10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(155, 126, 180, 0.1) 0%, transparent 60%); pointer-events: none; }
+    .auth-card { width: 100%; max-width: 440px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--space-2xl); box-shadow: var(--shadow-lg); position: relative; z-index: 1; }
+    .auth-header { text-align: center; margin-bottom: var(--space-2xl); }
+    .auth-logo { width: 60px; height: 60px; background: var(--color-lime); color: var(--color-bg); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 1.8rem; font-style: italic; margin: 0 auto var(--space-lg); }
+    .auth-header h1 { font-size: 2rem; margin-bottom: var(--space-xs); font-style: italic; color: var(--color-text); }
+    .auth-header p { color: var(--color-text-dim); font-size: 0.95rem; }
+    .form-group { margin-bottom: var(--space-md); }
+    .form-group label { display: block; font-size: 0.8rem; color: var(--color-text-dim); margin-bottom: var(--space-xs); letter-spacing: 0.5px; font-weight: 500; }
+    .form-group input { width: 100%; padding: 0.85rem 1rem; background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text); border-radius: var(--radius-md); font-size: 0.95rem; transition: all var(--transition-fast); font-family: var(--font-sans); }
+    .form-group input:focus { outline: none; border-color: var(--color-lime); background: var(--color-surface); box-shadow: 0 0 0 3px rgba(155, 126, 180, 0.1); }
+    .form-hint { font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.3rem; }
+    .btn-submit { width: 100%; padding: 1rem; background: var(--color-text); color: var(--color-bg); border-radius: var(--radius-full); font-weight: 500; font-size: 0.95rem; letter-spacing: 0.5px; transition: all var(--transition-fast); margin-top: var(--space-md); }
+    .btn-submit:hover:not(:disabled) { background: var(--color-lime); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    .auth-divider { display: flex; align-items: center; gap: var(--space-md); margin: var(--space-xl) 0; color: var(--color-text-muted); font-size: 0.8rem; }
+    .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--color-border); }
+    .auth-footer { text-align: center; margin-top: var(--space-xl); font-size: 0.9rem; color: var(--color-text-dim); }
+    .auth-footer a { color: var(--color-text); font-weight: 500; }
+    .auth-footer a:hover { color: var(--color-lime); }
+    .auth-message { padding: 0.8rem 1rem; border-radius: var(--radius-md); font-size: 0.85rem; margin-bottom: var(--space-md); display: none; }
+    .auth-message.error { display: block; background: rgba(196, 107, 107, 0.1); color: var(--color-error); border: 1px solid rgba(196, 107, 107, 0.2); }
+  </style>
+</head>
+<body>
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="/index.html" class="nav-logo"><div class="nav-logo-mark">R</div><span>Reservini</span></a>
+      <a href="/index.html" class="btn btn-ghost">← Retour à l'accueil</a>
+    </div>
+  </nav>
+
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo">R</div>
+        <h1>Créer un compte.</h1>
+        <p>Rejoignez la communauté Reservini</p>
+      </div>
+      
+      <div id="authMessage" class="auth-message"></div>
+      
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="username">Nom d'utilisateur *</label>
+          <input type="text" id="username" name="username" required placeholder="Nom et prénom" minlength="3" maxlength="20">
+          <div class="form-hint">3-20 caractères. Lettres, chiffres et _ uniquement</div>
+        </div>
+        
+        <div class="form-group">
+          <label for="fullName">Nom de l'établissement *</label>
+          <input type="text" id="fullName" name="fullName" required placeholder="Café Lumière">
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Adresse email *</label>
+          <input type="email" id="email" name="email" required placeholder="vous@exemple.com">
+        </div>
+        
+        <div class="form-group">
+          <label for="phone">Téléphone</label>
+          <input type="tel" id="phone" name="phone" placeholder="+216 XX XXX XXX">
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Mot de passe *</label>
+          <input type="password" id="password" name="password" required placeholder="••••••••" minlength="8">
+          <div class="form-hint">Minimum 8 caractères</div>
+        </div>
+        
+        <div class="form-group">
+          <label for="confirmPassword">Confirmer le mot de passe *</label>
+          <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="••••••••">
+        </div>
+        
+        <button type="submit" class="btn-submit" id="submitBtn">Créer mon compte</button>
+      </form>
+      
+      <div class="auth-divider">ou</div>
+      
+      <div class="auth-footer">
+        Déjà un compte ? <a href="/login.html">Se connecter</a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initApp, auth } from '/shared/js/app.js';
+    initApp();
+    
+    if (auth.isLoggedIn()) window.location.href = '/index.html';
+    
+    const API_URL = 'http://127.0.0.1:5000/api/v1';
+    const form = document.getElementById('registerForm');
+    const message = document.getElementById('authMessage');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      if (password !== confirmPassword) {
+        message.className = 'auth-message error';
+        message.textContent = 'Les mots de passe ne correspondent pas.';
+        message.style.display = 'block';
+        return;
+      }
+      
+      message.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Création...';
+      
+      try {
+        const res = await fetch(`${API_URL}/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: document.getElementById('username').value,
+            fullName: document.getElementById('fullName').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            password: password
+          })
+        });
+        
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Échec de l\'inscription');
+        
+        auth.setSession(data.token, data.user);
+        message.className = 'auth-message success';
+        message.style.background = 'rgba(107, 155, 126, 0.1)';
+        message.style.color = 'var(--color-success)';
+        message.style.border = '1px solid rgba(107, 155, 126, 0.2)';
+        message.textContent = 'Compte créé avec succès ! Redirection...';
+        message.style.display = 'block';
+        
+        setTimeout(() => { window.location.href = '/index.html'; }, 800);
+      } catch (error) {
+        message.className = 'auth-message error';
+        message.textContent = error.message === 'Failed to fetch' ? 'Backend injoignable. Vérifiez que le serveur tourne.' : error.message;
+        message.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Créer mon compte';
+      }
+    });
+  </script>
+</body>
+</html>

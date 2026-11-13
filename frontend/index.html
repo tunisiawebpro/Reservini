@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reservini — Cartes de table NFC + QR Premium</title>
+  <meta name="description" content="Cartes de table NFC + QR premium pour l'hôtellerie. Connectez vos clients à votre menu, réseaux sociaux et avis. Sans application.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/shared/css/theme.css">
+  
+  <style>
+    /* ============================================
+       HOME PAGE STYLES
+       ============================================ */
+    
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 0 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 10%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(155, 126, 180, 0.12) 0%, transparent 60%);
+      pointer-events: none;
+      animation: float 12s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-30px, 30px) scale(1.05); }
+    }
+    
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3xl);
+      align-items: center;
+    }
+    
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: 0.4rem 1rem;
+      background: var(--color-mauve-pale);
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-mauve-dark);
+      margin-bottom: var(--space-lg);
+      font-weight: 500;
+    }
+    
+    .hero-eyebrow-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--color-mauve);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    
+    .hero h1 {
+      font-size: clamp(2.8rem, 5.5vw, 5rem);
+      line-height: 1;
+      margin-bottom: var(--space-lg);
+      font-style: italic;
+    }
+    
+    .hero h1 .accent {
+      color: var(--color-mauve);
+      font-style: italic;
+    }
+    
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--color-text-dim);
+      max-width: 480px;
+      margin-bottom: var(--space-2xl);
+      line-height: 1.7;
+    }
+    
+    .hero-ctas {
+      display: flex;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+      margin-bottom: var(--space-2xl);
+    }
+    
+    .hero-stats {
+      display: flex;
+      gap: var(--space-2xl);
+      padding-top: var(--space-xl);
+      border-top: 1px solid var(--color-border);
+    }
+    
+    .stat-value {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--color-mauve-dark);
+      line-height: 1;
+      font-style: italic;
+    }
+    
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--color-text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 0.3rem;
+    }
+    
+    /* Hero Card Visual */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 550px;
+      perspective: 1500px;
+    }
+    
+    .hero-card-scene {
+      position: relative;
+      width: 300px;
+      height: 480px;
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out;
+    }
+    
+    .hero-card {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #faf7f2 0%, #f0e8d8 100%);
+      border: 1px solid var(--color-mauve-light);
+      border-radius: var(--radius-xl);
+      box-shadow: 
+        0 30px 80px rgba(93, 75, 107, 0.2),
+        0 0 0 1px rgba(155, 126, 180, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      color: var(--color-mauve-dark);
+    }
+    
+    .hero-card-nfc {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.7rem;
+      background: var(--color-mauve-pale);
+      border-radius: var(--radius-full);
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      color: var(--color-mauve-dark);
+    }
+    
+    .hero-card-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--color-mauve);
+      color: var(--color-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      font-family: var(--font-serif);
+      font-style: italic;
+    }
+    
+    .hero-card-name {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      font-style: italic;
+    }
+    
+    .hero-card-qr {
+      width: 140px;
+      height: 140px;
+      background: #fff;
+      padding: 10px;
+      border-radius: var(--radius-md);
+      margin: 1.5rem 0;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .hero-card-table-label {
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      opacity: 0.6;
+      text-transform: uppercase;
+    }
+    
+    .hero-card-table-number {
+      font-family: var(--font-serif);
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--color-mauve);
+      line-height: 1;
+      margin-top: 0.3rem;
+      font-style: italic;
+    }
+    
+    .hero-card-brand {
+      position: absolute;
+      bottom: 1.5rem;
+      font-size: 0.6rem;
+      letter-spacing: 4px;
+      opacity: 0.4;
+      text-transform: uppercase;
+    }
+    
+    /* Floating cards around */
+    .hero-float {
+      position: absolute;
+      padding: 0.7rem 1rem;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      box-shadow: var(--shadow-md);
+      animation: floatY 5s ease-in-out infinite;
+    }
+    
+    .hero-float-1 { top: 10%; left: -30px; animation-delay: 0s; }
+    .hero-float-2 { top: 45%; right: -40px; animation-delay: 1.5s; }
+    .hero-float-3 { bottom: 15%; left: -20px; animation-delay: 3s; }
+    
+    @keyframes floatY {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+    
+    .hero-float-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--color-mauve-pale);
+      color: var(--color-mauve-dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+    
+    .hero-float-text strong {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--color-mauve-dark);
+    }
+    
+    .hero-float-text span {
+      font-size: 0.7rem;
+      color: var(--color-text-dim);
+    }
+    
+    /* ============================================
+       SECTIONS
+       ============================================ */
+    section {
+      padding: var(--space-4xl) 0;
+      position: relative;
+    }
+    
+    /* VISUAL SHOWCASE (Image-heavy) */
+    .visual-showcase {
+      background: var(--color-bg-alt);
+    }
+    
+    .visual-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+      margin-top: var(--space-2xl);
+    }
+    
+    .visual-card {
+      aspect-ratio: 3/4;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: all var(--transition-smooth);
+      background: linear-gradient(135deg, var(--color-mauve-pale) 0%, var(--color-bg) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--color-border);
+    }
+    
+    .visual-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .visual-card-inner {
+      width: 60%;
+      aspect-ratio: 2/3;
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      transition: transform var(--transition-smooth);
+    }
+    
+    .visual-card:hover .visual-card-inner {
+      transform: scale(1.05) rotate(-2deg);
+    }
+    
+    .visual-card-mark {
+      width: 40px;
+      height: 40px;
+      background: var(--color-mauve);
+      color: var(--color-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-style: italic;
+      margin-bottom: 0.8rem;
+    }
+    
+    .visual-card-name {
+      font-family: var(--font-serif);
+      font-size: 0.9rem;
+      color: var(--color-mauve-dark);
+      font-style: italic;
+      text-align: center;
+      margin-bottom: 0.8rem;
+    }
+    
+    .visual-card-qr {
+      width: 50px;
+      height: 50px;
+      background: var(--color-mauve-dark);
+      border-radius: 4px;
+    }
+    
+    .visual-card-label {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+      text-align: center;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-mauve-dark);
+      font-weight: 500;
+    }
+    
+    /* ============================================
+       PROBLEM / SOLUTION
+       ============================================ */
+    .ps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-xl);
+      margin-top: var(--space-2xl);
+    }
+    
+    .ps-card {
+      padding: var(--space-2xl);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      position: relative;
+    }
+    
+    .ps-card.before {
+      background: linear-gradient(135deg, rgba(196, 107, 107, 0.04) 0%, var(--color-surface) 100%);
+    }
+    
+    .ps-card.after {
+      background: linear-gradient(135deg, rgba(155, 126, 180, 0.06) 0%, var(--color-surface) 100%);
+      border-color: var(--color-mauve-light);
+    }
+    
+    .ps-badge {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: var(--space-lg);
+      font-weight: 600;
+    }
+    
+    .ps-card.before .ps-badge {
+      background: rgba(196, 107, 107, 0.1);
+      color: var(--color-error);
+    }
+    
+    .ps-card.after .ps-badge {
+      background: var(--color-mauve-pale);
+      color: var(--color-mauve-dark);
+    }
+    
+    .ps-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: var(--space-lg);
+      font-style: italic;
+    }
+    
+    .ps-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    
+    .ps-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-md);
+      font-size: 0.95rem;
+      color: var(--color-text-dim);
+    }
+    
+    .ps-list li::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+    
+    .ps-card.before .ps-list li::before {
+      content: '✕';
+      background: rgba(196, 107, 107, 0.1);
+      color: var(--color-error);
+    }
+    
+    .ps-card.after .ps-list li::before {
+      content: '✓';
+      background: var(--color-mauve-pale);
+      color: var(--color-mauve-dark);
+    }
+    
+    /* ============================================
+       STEPS
+       ============================================ */
+    .steps {
+      background: var(--color-bg-alt);
+    }
+    
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-xl);
+      margin-top: var(--space-2xl);
+    }
+    
+    .step-card {
+      text-align: center;
+      padding: var(--space-xl);
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+      transition: all var(--transition-smooth);
+    }
+    
+    .step-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--color-mauve-light);
+    }
+    
+    .step-number {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto var(--space-md);
+      background: var(--color-mauve-pale);
+      color: var(--color-mauve-dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 600;
+      font-style: italic;
+    }
+    
+    .step-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: var(--space-xs);
+    }
+    
+    .step-card p {
+      font-size: 0.85rem;
+      color: var(--color-text-dim);
+    }
+    
+    /* ============================================
+       PRODUCTS
+       ============================================ */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-xl);
+      margin-top: var(--space-2xl);
+    }
+    
+    .product-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: all var(--transition-smooth);
+      cursor: pointer;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--color-mauve-light);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .product-image {
+      aspect-ratio: 4/3;
+      background: linear-gradient(135deg, var(--color-mauve-pale) 0%, var(--color-bg) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    
+    .product-mini-card {
+      width: 100px;
+      height: 150px;
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      gap: 0.5rem;
+      box-shadow: var(--shadow-md);
+      transition: transform var(--transition-smooth);
+    }
+    
+    .product-card:hover .product-mini-card {
+      transform: scale(1.05) rotate(-3deg);
+    }
+    
+    .product-mini-mark {
+      width: 36px;
+      height: 36px;
+      background: var(--color-mauve);
+      color: var(--color-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-style: italic;
+    }
+    
+    .product-mini-name {
+      font-family: var(--font-serif);
+      font-size: 0.7rem;
+      color: var(--color-mauve-dark);
+      font-style: italic;
+      text-align: center;
+    }
+    
+    .product-info {
+      padding: var(--space-lg);
+    }
+    
+    .product-category {
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-mauve);
+      margin-bottom: var(--space-xs);
+    }
+    
+    .product-name {
+      font-size: 1.2rem;
+      margin-bottom: var(--space-sm);
+      font-style: italic;
+    }
+    
+    .product-desc {
+      font-size: 0.85rem;
+      color: var(--color-text-dim);
+      margin-bottom: var(--space-md);
+      line-height: 1.6;
+    }
+    
+    .product-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--space-md);
+      border-top: 1px solid var(--color-border);
+    }
+    
+    .product-price {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--color-mauve-dark);
+    }
+    
+    .product-btn {
+      padding: 0.5rem 1rem;
+      background: var(--color-mauve-dark);
+      color: var(--color-bg);
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: all var(--transition-fast);
+    }
+    
+    .product-btn:hover {
+      background: var(--color-mauve);
+    }
+    
+    /* ============================================
+       DEMO LAB
+       ============================================ */
+    .demo-lab {
+      background: var(--color-bg-alt);
+    }
+    
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3xl);
+      align-items: center;
+      margin-top: var(--space-2xl);
+    }
+    
+    .demo-phone {
+      position: relative;
+      width: 280px;
+      height: 560px;
+      margin: 0 auto;
+      background: var(--color-mauve-dark);
+      border-radius: 40px;
+      padding: 10px;
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .demo-phone-screen {
+      width: 100%;
+      height: 100%;
+      background: var(--color-bg);
+      border-radius: 32px;
+      overflow: hidden;
+      padding: 2.5rem 1rem 1rem;
+      color: var(--color-mauve-dark);
+    }
+    
+    .demo-phone-notch {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 18px;
+      background: var(--color-mauve-dark);
+      border-radius: 10px;
+      z-index: 10;
+    }
+    
+    .demo-header {
+      text-align: center;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    .demo-logo {
+      width: 45px;
+      height: 45px;
+      background: var(--color-mauve);
+      color: var(--color-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 0.5rem;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.2rem;
+    }
+    
+    .demo-name {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-style: italic;
+      font-weight: 600;
+    }
+    
+    .demo-tagline {
+      font-size: 0.65rem;
+      opacity: 0.6;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    
+    .demo-cats {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+    
+    .demo-cat {
+      padding: 0.3rem 0.7rem;
+      background: var(--color-mauve-pale);
+      border-radius: var(--radius-full);
+      font-size: 0.65rem;
+      white-space: nowrap;
+      font-weight: 500;
+      color: var(--color-mauve-dark);
+    }
+    
+    .demo-cat.active {
+      background: var(--color-mauve-dark);
+      color: var(--color-bg);
+    }
+    
+    .demo-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px dashed var(--color-border);
+      font-size: 0.75rem;
+    }
+    
+    .demo-item-price {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      color: var(--color-mauve);
+    }
+    
+    .demo-order-btn {
+      position: absolute;
+      bottom: 1.5rem;
+      left: 1rem;
+      right: 1rem;
+      padding: 0.7rem;
+      background: var(--color-mauve-dark);
+      color: var(--color-bg);
+      border-radius: var(--radius-full);
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    /* ============================================
+       TEMPLATES
+       ============================================ */
+    .templates-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-lg);
+      margin-top: var(--space-2xl);
+    }
+    
+    .template-card {
+      aspect-ratio: 3/4;
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-smooth);
+      border: 2px solid transparent;
+      text-align: center;
+    }
+    
+    .template-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: var(--color-mauve);
+    }
+    
+    .template-noir { background: linear-gradient(135deg, #2a1f33 0%, #1a1222 100%); color: #e8dff0; }
+    .template-ivory { background: linear-gradient(135deg, #f5f0e1 0%, #e8dfc5 100%); color: #5d4b6b; }
+    .template-acid { background: linear-gradient(135deg, #c9b8d9 0%, #9b7eb4 100%); color: #2a1f33; }
+    .template-ember { background: linear-gradient(135deg, #8b6f47 0%, #5d4b2e 100%); color: #f5f0e1; }
+    
+    .template-mark {
+      font-size: 2rem;
+      margin-bottom: var(--space-sm);
+      font-family: var(--font-serif);
+      font-style: italic;
+    }
+    
+    .template-name {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 500;
+      font-style: italic;
+      margin-bottom: 0.3rem;
+    }
+    
+    .template-desc {
+      font-size: 0.7rem;
+      opacity: 0.7;
+      letter-spacing: 1px;
+    }
+    
+    /* ============================================
+       FAQ
+       ============================================ */
+    .faq {
+      background: var(--color-bg-alt);
+    }
+    
+    .faq-list {
+      max-width: 800px;
+      margin: var(--space-2xl) auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    
+    .faq-item {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: all var(--transition-fast);
+    }
+    
+    .faq-item.active {
+      border-color: var(--color-mauve-light);
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .faq-question {
+      width: 100%;
+      padding: var(--space-lg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-align: left;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--color-mauve-dark);
+    }
+    
+    .faq-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform var(--transition-fast);
+      font-size: 1.3rem;
+      color: var(--color-mauve);
+    }
+    
+    .faq-item.active .faq-icon {
+      transform: rotate(45deg);
+    }
+    
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height var(--transition-smooth);
+    }
+    
+    .faq-item.active .faq-answer {
+      max-height: 300px;
+    }
+    
+    .faq-answer-content {
+      padding: 0 var(--space-lg) var(--space-lg);
+      color: var(--color-text-dim);
+      line-height: 1.7;
+      font-size: 0.9rem;
+    }
+    
+    /* ============================================
+       FINAL CTA
+       ============================================ */
+    .final-cta {
+      text-align: center;
+      padding: var(--space-4xl) 0;
+      background: linear-gradient(135deg, var(--color-mauve-pale) 0%, var(--color-bg) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .final-cta::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(155, 126, 180, 0.1) 0%, transparent 60%);
+    }
+    
+    .final-cta-content {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    
+    .final-cta h2 {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      margin-bottom: var(--space-lg);
+      font-style: italic;
+    }
+    
+    .final-cta p {
+      font-size: 1.1rem;
+      color: var(--color-text-dim);
+      margin-bottom: var(--space-2xl);
+      line-height: 1.7;
+    }
+    
+    .final-cta-buttons {
+      display: flex;
+      gap: var(--space-md);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    /* ============================================
+       ANIMATIONS
+       ============================================ */
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 1024px) {
+      .hero-grid,
+      .demo-grid,
+      .ps-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-2xl);
+      }
+      
+      .hero-visual { min-height: 500px; }
+      
+      .visual-grid,
+      .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .steps-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .templates-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (max-width: 640px) {
+      .visual-grid,
+      .products-grid,
+      .steps-grid,
+      .templates-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .hero-stats {
+        flex-wrap: wrap;
+        gap: var(--space-lg);
+      }
+    }
+
+    /* =========================================
+   INTERACTIVE SHOWCASE (GAMIFIED)
+   ========================================= */
+.interactive-showcase {
+  padding: 100px 0;
+  background: var(--color-bg-alt);
+  overflow: visible; /* Important pour le téléphone qui dépasse */
+}
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+/* Contrôles */
+.showcase-controls .section-title em { color: var(--color-mauve); font-style: italic; }
+.showcase-controls .section-subtitle { font-size: 1.1rem; color: var(--color-text-dim); line-height: 1.7; margin-bottom: 2.5rem; }
+
+.style-selector { margin-bottom: 2rem; }
+.selector-label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-text-dim); margin-bottom: 0.8rem; font-weight: 600; }
+.style-options { display: flex; gap: 1rem; }
+.style-btn {
+  width: 48px; height: 48px; border-radius: 50%; border: 3px solid transparent;
+  cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.style-btn:hover { transform: scale(1.1); }
+.style-btn.active { border-color: var(--color-mauve); transform: scale(1.15); box-shadow: 0 0 0 4px rgba(155, 126, 180, 0.2); }
+
+.btn-scan {
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 1rem 2rem; background: var(--color-mauve-dark); color: white;
+  border: none; border-radius: 50px; font-size: 1rem; font-weight: 600;
+  cursor: pointer; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(93, 75, 107, 0.3);
+}
+.btn-scan:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(93, 75, 107, 0.4); }
+
+/* Scène 3D */
+.showcase-stage {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  perspective: 1200px; min-height: 600px;
+}
+
+.card-tilt-wrapper {
+  width: 320px; height: 500px;
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out; /* Transition rapide pour le suivi souris fluide */
+}
+
+.card-3d-interactive {
+  width: 100%; height: 100%;
+  position: relative; transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  cursor: grab;
+}
+.card-3d-interactive:active { cursor: grabbing; }
+
+.card-face-interactive {
+  position: absolute; width: 100%; height: 100%;
+  backface-visibility: hidden; border-radius: 24px;
+  display: flex; flex-direction: column;
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: background 0.5s ease, color 0.5s ease;
+}
+
+/* Thèmes Dynamiques */
+.theme-noir { background: linear-gradient(145deg, #2a1f33 0%, #1a1222 100%); color: #e8dff0; }
+.theme-ivoire { background: linear-gradient(145deg, #f5f0e1 0%, #e8dfc5 100%); color: #5d4b6b; border-color: rgba(93, 75, 107, 0.2); }
+.theme-acid { background: linear-gradient(145deg, #c9b8d9 0%, #9b7eb4 100%); color: #2a1f33; border-color: rgba(42, 31, 51, 0.2); }
+.theme-ember { background: linear-gradient(145deg, #8b6f47 0%, #5d4b2e 100%); color: #f5f0e1; border-color: rgba(245, 240, 225, 0.2); }
+
+.card-back-interactive { transform: rotateY(180deg); align-items: center; justify-content: center; text-align: center; }
+
+/* Contenu Carte */
+.card-content, .card-content-back { padding: 2rem; height: 100%; display: flex; flex-direction: column; position: relative; z-index: 2; }
+.card-content-back { align-items: center; justify-content: center; }
+
+.nfc-pulse {
+  position: absolute; top: -20%; right: -20%; width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(155, 126, 180, 0.1) 0%, transparent 60%);
+  animation: pulse 4s infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
+
+.card-top { display: flex; justify-content: flex-end; }
+.nfc-chip { opacity: 0.7; }
+.card-logo-dynamic {
+  width: 80px; height: 80px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-size: 2.5rem; font-style: italic; margin: 1.5rem auto 1rem;
+  backdrop-filter: blur(10px); transition: all 0.5s ease;
+}
+.theme-ivoire .card-logo-dynamic, .theme-acid .card-logo-dynamic { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); }
+
+.card-name-dynamic { font-family: var(--font-serif); font-size: 1.8rem; text-align: center; font-style: italic; margin-bottom: 0.5rem; }
+.card-table-dynamic { text-align: center; font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; opacity: 0.6; margin-bottom: auto; }
+.card-qr-dynamic { width: 120px; height: 120px; background: #fff; border-radius: 16px; margin: 0 auto 1rem; padding: 10px; display: flex; align-items: center; justify-content: center; }
+.qr-mock { width: 100%; height: 100%; background: repeating-linear-gradient(45deg, #000 0, #000 20%, transparent 20%, transparent 40%); opacity: 0.8; border-radius: 8px; }
+.tap-hint { text-align: center; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.5; }
+
+.brand-mark { width: 90px; height: 90px; background: var(--color-mauve-dark); color: #f5f0e1; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 3rem; font-style: italic; margin-bottom: 1.5rem; }
+.brand-name { font-size: 1.5rem; letter-spacing: 4px; margin-bottom: 0.5rem; }
+.brand-tagline { font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.6; }
+.brand-divider { width: 50px; height: 2px; background: currentColor; opacity: 0.3; margin: 1.5rem auto; }
+.brand-web { font-size: 0.85rem; font-weight: 600; opacity: 0.8; }
+
+.stage-shadow {
+  width: 180px; height: 20px; background: rgba(0,0,0,0.2); border-radius: 50%;
+  filter: blur(15px); margin-top: 2rem; transition: all 0.3s ease;
+}
+
+/* Mockup Téléphone (Caché par défaut) */
+.phone-mockup {
+  position: absolute; right: -50px; bottom: 50px;
+  width: 220px; height: 440px; background: #111; border-radius: 36px;
+  border: 8px solid #333; box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+  transform: translateY(100px) scale(0.8); opacity: 0;
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 10; overflow: hidden;
+}
+.phone-mockup.active { transform: translateY(0) scale(1); opacity: 1; }
+.phone-notch { width: 100px; height: 24px; background: #333; border-radius: 0 0 16px 16px; margin: 0 auto; position: relative; z-index: 2; }
+.phone-screen { background: #fff; height: calc(100% - 24px); padding: 1rem; display: flex; flex-direction: column; }
+.screen-header { display: flex; align-items: center; gap: 0.5rem; padding-bottom: 1rem; border-bottom: 1px solid #eee; margin-bottom: 1rem; }
+.screen-logo { width: 30px; height: 30px; background: var(--color-mauve-dark); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: serif; font-style: italic; }
+.screen-header span { font-weight: 600; color: #333; font-size: 0.9rem; }
+.menu-item-mock { height: 50px; background: #f5f5f5; border-radius: 8px; margin-bottom: 0.8rem; }
+.scan-success { margin-top: auto; text-align: center; color: #2d6a4f; font-weight: 600; font-size: 0.9rem; animation: fadeIn 0.5s ease 0.3s both; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Responsive */
+@media (max-width: 968px) {
+  .showcase-grid { grid-template-columns: 1fr; text-align: center; }
+  .style-options { justify-content: center; }
+  .btn-scan { margin: 0 auto; }
+  .phone-mockup { right: 50%; transform: translateX(50%) translateY(100px) scale(0.8); }
+  .phone-mockup.active { transform: translateX(50%) translateY(0) scale(1); }
+}
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="/index.html" class="nav-logo">
+        <div class="nav-logo-mark">R</div>
+        <span>Reservini</span>
+      </a>
+      
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/shop.html">Boutique</a></li>
+        <li><a href="/demo-lab.html">Démo</a></li>
+        <li><a href="/studio.html">Studio</a></li>
+        <li><a href="/index.html#faq">FAQ</a></li>
+      </ul>
+      
+      <div class="nav-right">
+        <div id="authContainer">
+          <a href="/login.html" class="nav-cta">Connexion</a>
+        </div>
+        <button class="nav-mobile-toggle" id="mobileToggle">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-content animate-on-scroll">
+          <div class="hero-eyebrow">
+            <span class="hero-eyebrow-dot"></span>
+            <span>NFC + QR · Hôtellerie</span>
+          </div>
+          
+          <h1>
+            Vos tables.<br>
+            Un geste.<br>
+            Une <span class="accent">expérience</span>.
+          </h1>
+          
+          <p class="hero-subtitle">
+            Des cartes de table NFC + QR premium qui connectent vos clients à votre menu, vos réseaux et vos avis. Sans application.
+          </p>
+          
+          <div class="hero-ctas">
+            <a href="/shop.html" class="btn btn-primary">
+              Découvrir la boutique
+              <span>→</span>
+            </a>
+            <a href="/demo-lab.html" class="btn btn-primary" target="_self">
+  Entrer dans le Démo Lab
+  <span>→</span>
+</a>
+          </div>
+          
+          <div class="hero-stats">
+            <div>
+              <div class="stat-value">-6s</div>
+              <div class="stat-label">Tap vers menu</div>
+            </div>
+            <div>
+              <div class="stat-value">0</div>
+              <div class="stat-label">Application</div>
+            </div>
+            <div>
+              <div class="stat-value">∞</div>
+              <div class="stat-label">Mises à jour</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="hero-visual animate-on-scroll">
+          <div class="hero-card-scene" id="heroCardScene">
+            <div class="hero-card">
+              <div class="hero-card-nfc">◈ NFC</div>
+              <div class="hero-card-logo">R</div>
+              <div class="hero-card-name">Café Lumière</div>
+              <div class="hero-card-qr" id="heroQR"></div>
+              <div>
+                <div class="hero-card-table-label">Table N°</div>
+                <div class="hero-card-table-number">08</div>
+              </div>
+              <div class="hero-card-brand">RESERVINI</div>
+            </div>
+            
+            <div class="hero-float hero-float-1">
+              <div class="hero-float-icon">◈</div>
+              <div class="hero-float-text">
+                <strong>NFC Ready</strong>
+                <span>Tapez pour ouvrir</span>
+              </div>
+            </div>
+            
+            <div class="hero-float hero-float-2">
+              <div class="hero-float-icon">▦</div>
+              <div class="hero-float-text">
+                <strong>QR Code</strong>
+                <span>Tout caméra</span>
+              </div>
+            </div>
+            
+            <div class="hero-float hero-float-3">
+              <div class="hero-float-icon">★</div>
+              <div class="hero-float-text">
+                <strong>Menu Live</strong>
+                <span>Sans réimpression</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VISUAL SHOWCASE -->
+    <section class="interactive-showcase" id="product-section">
+    <div class="container">
+      <div class="showcase-grid">
+        
+        <!-- Côté Gauche : Contrôles Interactifs -->
+        <div class="showcase-controls animate-on-scroll">
+          <div class="section-label">01 — L'Expérience Interactive</div>
+          <h2 class="section-title">Ne la regardez pas.<br><em>Jouez avec.</em></h2>
+          <p class="section-subtitle">
+            Testez dès maintenant la fluidité de l'expérience. Changez le style, inclinez la carte, et simulez le scan d'un client réel.
+          </p>
+          
+          <!-- Sélecteur de Style (Gamification 1) -->
+          <div class="style-selector">
+            <span class="selector-label">1. Choisissez le style :</span>
+            <div class="style-options">
+              <button class="style-btn active" data-theme="noir" style="background: linear-gradient(135deg, #2a1f33, #1a1222);"></button>
+              <button class="style-btn" data-theme="ivoire" style="background: linear-gradient(135deg, #f5f0e1, #e8dfc5);"></button>
+              <button class="style-btn" data-theme="acid" style="background: linear-gradient(135deg, #c9b8d9, #9b7eb4);"></button>
+              <button class="style-btn" data-theme="ember" style="background: linear-gradient(135deg, #8b6f47, #5d4b2e);"></button>
+            </div>
+          </div>
+
+          <!-- Bouton Simulation (Gamification 2) -->
+          <button id="simulateScanBtn" class="btn-scan">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            Simuler le Scan Client
+          </button>
+        </div>
+
+        <!-- Côté Droit : Scène 3D Interactive -->
+        <div class="showcase-stage animate-on-scroll">
+          <div class="card-tilt-wrapper" id="cardTiltWrapper">
+            <div class="card-3d-interactive" id="interactiveCard">
+              
+              <!-- FACE AVANT -->
+              <div class="card-face-interactive card-front-interactive theme-noir" id="cardFront">
+                <div class="nfc-pulse"></div>
+                <div class="card-content">
+                  <div class="card-top">
+                    <div class="nfc-chip">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8.32a7.43 7.43 0 0 1 0 7.36M9.46 6.21a11.76 11.76 0 0 1 0 11.58M12.91 4.1a16.07 16.07 0 0 1 0 15.8M16.37 2a20.4 20.4 0 0 1 0 20"/></svg>
+                    </div>
+                  </div>
+                  <div class="card-logo-dynamic">R</div>
+                  <h3 class="card-name-dynamic">Café Lumière</h3>
+                  <div class="card-table-dynamic">Table N° 08</div>
+                  <div class="card-qr-dynamic">
+                    <div class="qr-mock"></div>
+                  </div>
+                  <div class="tap-hint">Tapez pour commander</div>
+                </div>
+              </div>
+
+              <!-- FACE ARRIÈRE -->
+              <div class="card-face-interactive card-back-interactive theme-noir" id="cardBack">
+                <div class="card-content-back">
+                  <div class="brand-mark">R</div>
+                  <h4 class="brand-name">RESERVINI</h4>
+                  <p class="brand-tagline">Smart Table Experience</p>
+                  <div class="brand-divider"></div>
+                  <p class="brand-web">reservini.com</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div class="stage-shadow"></div>
+
+          <!-- Mockup Téléphone (Apparaît au scan) -->
+          <div class="phone-mockup" id="phoneMockup">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="screen-header">
+                <div class="screen-logo">R</div>
+                <span>Café Lumière</span>
+              </div>
+              <div class="screen-body">
+                <div class="menu-item-mock"></div>
+                <div class="menu-item-mock"></div>
+                <div class="menu-item-mock"></div>
+                <div class="scan-success">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2d6a4f" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  <p>Menu ouvert avec succès !</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM / SOLUTION -->
+  <section>
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <div class="section-label">02 — Pourquoi</div>
+        <h2 class="section-title">Les menus s'effacent.<br>Les téléphones restent.</h2>
+      </div>
+      
+      <div class="ps-grid">
+        <div class="ps-card before animate-on-scroll">
+          <div class="ps-badge">Avant</div>
+          <h3>Le chaos papier</h3>
+          <ul class="ps-list">
+            <li>Menus collants, réimpressions chaque saison</li>
+            <li>Instagram trouvé par hasard</li>
+            <li>Avis demandés au mauvais moment</li>
+            <li>Spéciaux invisibles après 19h</li>
+          </ul>
+        </div>
+        
+        <div class="ps-card after animate-on-scroll">
+          <div class="ps-badge">Après · Un tap</div>
+          <h3>La table vend pour vous</h3>
+          <ul class="ps-list">
+            <li>Menu toujours à jour, sans réimpression</li>
+            <li>Réseaux + avis à un tap</li>
+            <li>Spéciaux, photos, langues</li>
+            <li>Module de commande optionnel</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEPS -->
+  <section class="steps">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <div class="section-label">03 — Comment</div>
+        <h2 class="section-title">De la poche à l'assiette<br>en quatre gestes.</h2>
+      </div>
+      
+      <div class="steps-grid">
+        <div class="step-card animate-on-scroll">
+          <div class="step-number">1</div>
+          <h3>Tapez ou scannez</h3>
+          <p>Le téléphone rencontre la carte.</p>
+        </div>
+        
+        <div class="step-card animate-on-scroll">
+          <div class="step-number">2</div>
+          <h3>La page s'ouvre</h3>
+          <p>Menu, photos, horaires.</p>
+        </div>
+        
+        <div class="step-card animate-on-scroll">
+          <div class="step-number">3</div>
+          <h3>Parcourez & commandez</h3>
+          <p>Catégories, détails, avis.</p>
+        </div>
+        
+        <div class="step-card animate-on-scroll">
+          <div class="step-number">4</div>
+          <h3>Envoyé en cuisine</h3>
+          <p>Panier → cuisine en un tap.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEMO LAB -->
+  <section class="demo-lab" id="demo-lab">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <div class="section-label">05 — Démo</div>
+        <h2 class="section-title">Vivez l'expérience.<br>Avant d'acheter.</h2>
+      </div>
+      
+      <div class="demo-grid">
+        <div class="animate-on-scroll">
+          <div class="demo-phone">
+            <div class="demo-phone-notch"></div>
+            <div class="demo-phone-screen">
+              <div class="demo-header">
+                <div class="demo-logo">R</div>
+                <div class="demo-name">Café Lumière</div>
+                <div class="demo-tagline">Table 08 · Ouvert</div>
+              </div>
+              
+              <div class="demo-cats">
+                <div class="demo-cat active">Cafés</div>
+                <div class="demo-cat">Viennoiseries</div>
+                <div class="demo-cat">Jus</div>
+                <div class="demo-cat">Brunch</div>
+              </div>
+              
+              <div class="demo-item">
+                <span>Espresso</span>
+                <span class="demo-item-price">3,50 DT</span>
+              </div>
+              <div class="demo-item">
+                <span>Cappuccino</span>
+                <span class="demo-item-price">5,00 DT</span>
+              </div>
+              <div class="demo-item">
+                <span>Latte glacé</span>
+                <span class="demo-item-price">6,00 DT</span>
+              </div>
+              <div class="demo-item">
+                <span>Croissant</span>
+                <span class="demo-item-price">4,00 DT</span>
+              </div>
+              <div class="demo-item">
+                <span>Jus d'orange</span>
+                <span class="demo-item-price">5,50 DT</span>
+              </div>
+              
+              <div class="demo-order-btn">Voir le panier · 2 articles</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="animate-on-scroll">
+          <h3 style="font-size: 1.5rem; margin-bottom: var(--space-lg); font-style: italic;">
+            Une expérience complète.
+          </h3>
+          <p style="color: var(--color-text-dim); margin-bottom: var(--space-xl); line-height: 1.7;">
+            Parcourez un vrai menu, ajoutez des articles au panier, passez commande. Voyez exactement ce que vos clients vivront.
+          </p>
+          
+          <a href="/demo-lab.html" class="btn btn-primary" target="_blank">
+            Entrer dans le Démo Lab
+            <span>→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEMPLATES -->
+  <section>
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <div class="section-label">06 — Atelier</div>
+        <h2 class="section-title">Composez votre carte.</h2>
+        <p class="section-subtitle">
+          Choisissez un style, une finition, votre identité. L'aperçu se met à jour instantanément.
+        </p>
+      </div>
+      
+      <div class="templates-grid">
+        <a href="/studio.html?template=noir" class="template-card template-noir animate-on-scroll">
+          <div class="template-mark">R</div>
+          <div class="template-name">Noir Mauve</div>
+          <div class="template-desc">Mat · Finition mauve</div>
+        </a>
+        
+        <a href="/studio.html?template=ivory" class="template-card template-ivory animate-on-scroll">
+          <div class="template-mark">R</div>
+          <div class="template-name">Ivoire Éditorial</div>
+          <div class="template-desc">Papier chaud · encre</div>
+        </a>
+        
+        <a href="/studio.html?template=acid" class="template-card template-acid animate-on-scroll">
+          <div class="template-mark">R</div>
+          <div class="template-name">Mauve Pop</div>
+          <div class="template-desc">Mauve total · sombre</div>
+        </a>
+        
+        <a href="/studio.html?template=ember" class="template-card template-ember animate-on-scroll">
+          <div class="template-mark">R</div>
+          <div class="template-name">Chêne Doré</div>
+          <div class="template-desc">Toasté · dorure</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <div class="section-label">07 — Questions</div>
+        <h2 class="section-title">Questions fréquentes.</h2>
+      </div>
+      
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>Faut-il une application pour lire le NFC ?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              Non. Les iPhones modernes (XS et plus) et la plupart des Android lisent le NFC nativement. Le navigateur s'ouvre instantanément — aucune installation requise.
+            </div>
+          </div>
+        </div>
+        
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>Et si le téléphone du client n'a pas le NFC ?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              Chaque carte a un QR code au verso. Tout appareil photo de smartphone peut le scanner et ouvrir la même page. Vous êtes couvert dans tous les cas.
+            </div>
+          </div>
+        </div>
+        
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>Puis-je mettre à jour le menu moi-même ?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              Oui ! Une fois vos cartes configurées, vous pouvez modifier plats, prix et spéciaux à tout moment depuis votre tableau de bord. Les changements apparaissent instantanément sur toutes les cartes.
+            </div>
+          </div>
+        </div>
+        
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>Combien de temps prend la production ?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              Les commandes standards sont expédiées sous 5-7 jours ouvrables. Les commandes personnalisées peuvent prendre 7-10 jours ouvrables selon la complexité.
+            </div>
+          </div>
+        </div>
+        
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>Livrez-vous dans toute la Tunisie ?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              Oui, nous livrons partout en Tunisie. La livraison est gratuite pour les commandes supérieures à 200 DT.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <div class="container">
+      <div class="final-cta-content animate-on-scroll">
+        <h2>Placez le menu là où<br>est <em>l'envie</em>.</h2>
+        <p>
+          Chaque table devient un serveur discret : menu, photos, avis et — quand vous le voulez — commande. Voyez-le en direct avant de demander un prix.
+        </p>
+        <div class="final-cta-buttons">
+          <a href="/studio.html" class="btn btn-primary">
+            Concevoir mes cartes
+            <span>→</span>
+          </a>
+          <a href="#demo-lab" class="btn btn-secondary">
+            Voir la démo
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3>Reservini</h3>
+          <p>Cartes de table NFC + QR premium pour l'hôtellerie. Connectez vos clients à votre menu, réseaux et avis. Sans application.</p>
+        </div>
+        
+        <div class="footer-col">
+          <h4>Produits</h4>
+          <ul>
+            <li><a href="/shop.html">Cartes de table</a></li>
+            <li><a href="/shop.html">Personnalisées</a></li>
+            <li><a href="/shop.html">Kits démarrage</a></li>
+            <li><a href="/studio.html">Studio</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col">
+          <h4>Entreprise</h4>
+          <ul>
+            <li><a href="#demo-lab">Démo Lab</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col">
+          <h4>Newsletter</h4>
+          <p style="font-size: 0.85rem; color: var(--color-text-dim); margin-bottom: var(--space-md);">Recevez nos nouveautés.</p>
+          <form style="display: flex; gap: 0.5rem;" onsubmit="event.preventDefault(); alert('Merci !');">
+            <input type="email" placeholder="Votre email" required style="flex: 1; padding: 0.6rem 1rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-full); font-size: 0.85rem; color: var(--color-text);">
+            <button type="submit" style="padding: 0.6rem 1rem; background: var(--color-mauve-dark); color: var(--color-bg); border-radius: var(--radius-full); font-size: 0.85rem;">→</button>
+          </form>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <div>© 2026 Reservini. Tous droits réservés.</div>
+        <div style="display: flex; gap: var(--space-lg);">
+          <a href="#">Confidentialité</a>
+          <a href="#">Conditions</a>
+          <a href="#">Livraison</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- QR Code Library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+  <script type="module">
+    import { initApp, auth } from '/shared/js/app.js';
+    
+    const API_URL = 'http://localhost:5000/api/v1';
+    
+    // Initialize shared app
+    initApp();
+    
+    // ============================================
+    // HERO 3D CARD
+    // ============================================
+    const heroScene = document.getElementById('heroCardScene');
+    
+    if (heroScene) {
+      heroScene.addEventListener('mousemove', (e) => {
+        const rect = heroScene.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const rotateX = ((y - centerY) / centerY) * -10;
+        const rotateY = ((x - centerX) / centerX) * 10;
+        
+        heroScene.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      });
+      
+      heroScene.addEventListener('mouseleave', () => {
+        heroScene.style.transform = 'perspective(1500px) rotateX(0) rotateY(0)';
+      });
+    }
+    
+    // ============================================
+    // QR CODE
+    // ============================================
+    const heroQR = document.getElementById('heroQR');
+    if (heroQR) {
+      new QRCode(heroQR, {
+        text: 'https://reservini.com/menu/demo',
+        width: 120,
+        height: 120,
+        colorDark: '#5d4b6b',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+    
+    // ============================================
+    // FAQ ACCORDION
+    // ============================================
+    document.querySelectorAll('.faq-item').forEach(item => {
+      const question = item.querySelector('.faq-question');
+      question.addEventListener('click', () => {
+        const isActive = item.classList.contains('active');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+        if (!isActive) item.classList.add('active');
+      });
+    });
+    
+    // ============================================
+    // LOAD PRODUCTS
+    // ============================================
+    async function loadProducts() {
+      const grid = document.getElementById('productsGrid');
+      
+      try {
+        const res = await fetch(`${API_URL}/products`);
+        const data = await res.json();
+        
+        if (!data.products || data.products.length === 0) {
+          grid.innerHTML = `
+            <div class="product-card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+              <p style="color: var(--color-text-dim);">Aucun produit. Lancez : <code>npm run db:seed</code></p>
+            </div>
+          `;
+          return;
+        }
+        
+        grid.innerHTML = data.products.slice(0, 3).map(product => `
+          <div class="product-card animate-on-scroll visible">
+            <div class="product-image">
+              <div class="product-mini-card">
+                <div class="product-mini-mark">R</div>
+                <div class="product-mini-name">${product.name.split(' ')[0]}</div>
+              </div>
+            </div>
+            <div class="product-info">
+              <div class="product-category">Carte NFC + QR</div>
+              <h3 class="product-name">${product.name}</h3>
+              <p class="product-desc">${product.description}</p>
+              <div class="product-footer">
+                <div class="product-price">${parseFloat(product.basePrice).toFixed(2)} DT</div>
+                <a href="/studio.html" class="product-btn">Personnaliser</a>
+              </div>
+            </div>
+          </div>
+        `).join('');
+        
+      } catch (error) {
+        console.error('Failed to load products:', error);
+        grid.innerHTML = `
+          <div class="product-card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <p style="color: var(--color-text-dim);">Backend non disponible. Lancez : <code>npm run dev</code></p>
+          </div>
+        `;
+      }
+    }
+    
+    loadProducts();
+  </script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tiltWrapper = document.getElementById('cardTiltWrapper');
+    const interactiveCard = document.getElementById('interactiveCard');
+    const cardFront = document.getElementById('cardFront');
+    const cardBack = document.getElementById('cardBack');
+    const styleBtns = document.querySelectorAll('.style-btn');
+    const simulateBtn = document.getElementById('simulateScanBtn');
+    const phoneMockup = document.getElementById('phoneMockup');
+    const stageShadow = document.querySelector('.stage-shadow');
+
+    // 1. GAMIFICATION : Effet 3D Tilt au mouvement de la souris
+    tiltWrapper.addEventListener('mousemove', (e) => {
+      const rect = tiltWrapper.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      // Calculer la rotation (max 15 degrés)
+      const xRotation = -((y - rect.height / 2) / rect.height * 20);
+      const yRotation = ((x - rect.width / 2) / rect.width * 20);
+      
+      interactiveCard.style.transform = `rotateX(${xRotation}deg) rotateY(${yRotation}deg)`;
+      stageShadow.style.transform = `translateX(${yRotation * -1}px) scale(0.9)`;
+    });
+
+    // Reset quand la souris sort
+    tiltWrapper.addEventListener('mouseleave', () => {
+      interactiveCard.style.transform = 'rotateX(0deg) rotateY(0deg)';
+      stageShadow.style.transform = 'translateX(0) scale(1)';
+    });
+
+    // 2. GAMIFICATION : Changement de thème instantané
+    styleBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Retirer la classe active de tous les boutons
+        styleBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const theme = btn.dataset.theme;
+        
+        // Mettre à jour les classes de la carte avec une transition fluide
+        cardFront.className = `card-face-interactive card-front-interactive theme-${theme}`;
+        cardBack.className = `card-face-interactive card-back-interactive theme-${theme}`;
+      });
+    });
+
+    // 3. GAMIFICATION : Simulation du Scan
+    let isScanned = false;
+    simulateBtn.addEventListener('click', () => {
+      isScanned = !isScanned;
+      
+      if (isScanned) {
+        // Retourner la carte pour montrer le "tap"
+        interactiveCard.style.transform = 'rotateY(180deg)';
+        setTimeout(() => {
+          phoneMockup.classList.add('active');
+          simulateBtn.innerHTML = `
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            Fermer la simulation
+          `;
+        }, 300);
+      } else {
+        phoneMockup.classList.remove('active');
+        interactiveCard.style.transform = 'rotateY(0deg)';
+        setTimeout(() => {
+          simulateBtn.innerHTML = `
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            Simuler le Scan Client
+          `;
+        }, 300);
+      }
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,762 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel · Reservini</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/css/theme.css">
+  
+  <style>
+    .admin-page { padding: 80px 0 var(--space-3xl); min-height: 100vh; background: var(--color-bg-alt); }
+    
+    /* Login Screen */
+    .admin-login {
+      max-width: 420px; margin: 80px auto; padding: var(--space-2xl);
+      background: var(--color-surface); border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl); box-shadow: var(--shadow-lg);
+    }
+    .admin-login h1 { font-family: var(--font-serif); font-size: 2rem; font-style: italic; text-align: center; margin-bottom: var(--space-lg); }
+    .admin-login .form-group { margin-bottom: var(--space-md); }
+    .admin-login input { width: 100%; padding: 0.9rem; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: 0.95rem; }
+    .admin-login input:focus { outline: none; border-color: var(--color-mauve); }
+    .admin-login button { width: 100%; padding: 1rem; background: var(--color-mauve-dark); color: var(--color-bg); border: none; border-radius: var(--radius-full); font-size: 1rem; font-weight: 500; cursor: pointer; margin-top: var(--space-md); }
+    .admin-login button:hover { background: var(--color-mauve); }
+    .login-error { color: var(--color-error); font-size: 0.85rem; text-align: center; margin-top: var(--space-md); display: none; }
+    
+    /* Dashboard Layout */
+    .admin-layout { display: grid; grid-template-columns: 240px 1fr; gap: var(--space-xl); max-width: 1400px; margin: 0 auto; padding: 0 var(--space-xl); }
+    
+    .admin-sidebar {
+      background: var(--color-surface); border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg); padding: var(--space-lg); height: fit-content;
+      position: sticky; top: 100px;
+    }
+    .admin-sidebar-header { padding-bottom: var(--space-md); border-bottom: 1px solid var(--color-border); margin-bottom: var(--space-md); }
+    .admin-sidebar-header h2 { font-family: var(--font-serif); font-size: 1.3rem; font-style: italic; }
+    .admin-sidebar-header p { font-size: 0.8rem; color: var(--color-text-dim); }
+    
+    .admin-nav { display: flex; flex-direction: column; gap: var(--space-xs); }
+    .admin-nav-btn {
+      display: flex; align-items: center; gap: var(--space-sm);
+      padding: 0.8rem 1rem; background: transparent; border: none;
+      border-radius: var(--radius-md); color: var(--color-text-dim);
+      font-size: 0.9rem; cursor: pointer; text-align: left; width: 100%;
+      transition: all var(--transition-fast);
+    }
+    .admin-nav-btn:hover { background: var(--color-bg); color: var(--color-text); }
+    .admin-nav-btn.active { background: var(--color-mauve-pale); color: var(--color-mauve-dark); font-weight: 500; }
+    .admin-nav-btn.logout { color: var(--color-error); margin-top: var(--space-md); }
+    .admin-nav-btn.logout:hover { background: rgba(196, 107, 107, 0.1); }
+    
+    .admin-main { min-height: 600px; }
+    .admin-view { display: none; animation: fadeIn 0.3s ease; }
+    .admin-view.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    /* Stats Cards */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-md); margin-bottom: var(--space-2xl); }
+    .stat-card {
+      background: var(--color-surface); border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg); padding: var(--space-lg);
+      transition: all var(--transition-fast);
+    }
+    .stat-card:hover { border-color: var(--color-mauve-light); transform: translateY(-2px); }
+    .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--color-text-dim); margin-bottom: var(--space-sm); }
+    .stat-value { font-family: var(--font-serif); font-size: 2.2rem; font-weight: 600; color: var(--color-mauve-dark); font-style: italic; }
+    .stat-change { font-size: 0.8rem; color: var(--color-success); margin-top: var(--space-xs); }
+    
+    /* Tables */
+    .data-table-container {
+      background: var(--color-surface); border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .table-header {
+      padding: var(--space-lg); border-bottom: 1px solid var(--color-border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .table-title { font-family: var(--font-serif); font-size: 1.3rem; font-style: italic; }
+    
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; padding: var(--space-md) var(--space-lg); background: var(--color-bg); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-text-dim); font-weight: 600; }
+    td { padding: var(--space-md) var(--space-lg); border-top: 1px solid var(--color-border); font-size: 0.9rem; }
+    tr:hover td { background: var(--color-bg); }
+    
+    .status-pill {
+      display: inline-block; padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 500;
+    }
+    .status-pending { background: rgba(212, 165, 116, 0.2); color: #b8860b; }
+    .status-paid { background: rgba(107, 155, 126, 0.2); color: var(--color-success); }
+    .status-processing { background: rgba(155, 126, 180, 0.2); color: var(--color-mauve-dark); }
+    
+    .action-btn {
+      padding: 0.4rem 0.8rem; background: var(--color-mauve-pale); color: var(--color-mauve-dark);
+      border: none; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;
+      transition: all var(--transition-fast); margin-right: 0.3rem;
+    }
+    .action-btn:hover { background: var(--color-mauve); color: var(--color-bg); }
+    .action-btn.danger { background: rgba(196, 107, 107, 0.1); color: var(--color-error); }
+    .action-btn.danger:hover { background: var(--color-error); color: white; }
+    
+    .empty-table { text-align: center; padding: 3rem; color: var(--color-text-dim); }
+    
+    @media (max-width: 968px) {
+      .admin-layout { grid-template-columns: 1fr; }
+      .admin-sidebar { position: static; }
+      table { font-size: 0.8rem; }
+      th, td { padding: 0.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="/index.html" class="nav-logo"><div class="nav-logo-mark">R</div><span>Reservini</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/index.html">Accueil</a></li>
+        <li><a href="/shop.html">Boutique</a></li>
+        <li><a href="/studio.html">Studio</a></li>
+        <li><a href="/account.html">Compte</a></li>
+      </ul>
+      <div class="nav-right">
+        <div id="authContainer"></div>
+        <button class="nav-mobile-toggle" id="mobileToggle"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="admin-page page-transition">
+    
+    <!-- LOGIN VIEW -->
+    <div id="adminLogin" class="admin-login">
+      <h1>Admin Panel</h1>
+      <p style="text-align: center; color: var(--color-text-dim); margin-bottom: var(--space-lg); font-size: 0.9rem;">Accès réservé aux administrateurs</p>
+      
+      <div class="form-group">
+        <label style="display: block; font-size: 0.8rem; color: var(--color-text-dim); margin-bottom: 0.5rem;">Email</label>
+        <input type="email" id="adminEmail" placeholder="admin@reservini.com">
+      </div>
+      <div class="form-group">
+        <label style="display: block; font-size: 0.8rem; color: var(--color-text-dim); margin-bottom: 0.5rem;">Mot de passe</label>
+        <input type="password" id="adminPassword" placeholder="••••••••">
+      </div>
+      
+      <button id="adminLoginBtn">Se connecter</button>
+      <div id="loginError" class="login-error"></div>
+      
+      <p style="text-align: center; margin-top: var(--space-lg); font-size: 0.8rem; color: var(--color-text-dim);">
+        <a href="/index.html" style="color: var(--color-mauve);">← Retour au site</a>
+      </p>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="adminDashboard" class="admin-layout" style="display: none;">
+      
+      <aside class="admin-sidebar">
+        <div class="admin-sidebar-header">
+          <h2>Reservini</h2>
+          <p id="adminName">Admin</p>
+        </div>
+        <nav class="admin-nav">
+          <button class="admin-nav-btn active" data-view="overview">📊 Vue d'ensemble</button>
+          <button class="admin-nav-btn" data-view="orders">📦 Commandes</button>
+          <button class="admin-nav-btn" data-view="users">👥 Utilisateurs</button>
+          <button class="admin-nav-btn" data-view="products">🛍️ Produits</button>
+          <button class="admin-nav-btn logout" id="adminLogout">🚪 Déconnexion</button>
+        </nav>
+      </aside>
+
+      <main class="admin-main">
+        
+        <!-- Overview -->
+        <div class="admin-view active" id="view-overview">
+          <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+              <div class="stat-label">Commandes totales</div>
+              <div class="stat-value" id="statOrders">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Clients inscrits</div>
+              <div class="stat-value" id="statUsers">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Chiffre d'affaires</div>
+              <div class="stat-value" id="statRevenue">0 DT</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">En attente</div>
+              <div class="stat-value" id="statPending">0</div>
+            </div>
+          </div>
+          
+          <div class="data-table-container">
+            <div class="table-header">
+              <h3 class="table-title">Commandes récentes</h3>
+            </div>
+            <div id="recentOrdersTable"></div>
+          </div>
+        </div>
+
+        <!-- Orders -->
+        <div class="admin-view" id="view-orders">
+          <div class="data-table-container">
+            <div class="table-header">
+              <h3 class="table-title">Toutes les commandes</h3>
+              <button class="action-btn" id="refreshOrders">🔄 Actualiser</button>
+            </div>
+            <div id="allOrdersTable"></div>
+          </div>
+        </div>
+
+        <!-- Users -->
+        <div class="admin-view" id="view-users">
+          <div class="data-table-container">
+            <div class="table-header">
+              <h3 class="table-title">Utilisateurs inscrits</h3>
+              <button class="action-btn" id="refreshUsers">🔄 Actualiser</button>
+              <button class="action-btn" id="addUserBtn" style="background: var(--color-success); color: white;">+ Ajouter</button>
+            </div>
+            <div id="usersTable"></div>
+          </div>
+        </div>
+
+        <!-- Products View -->
+<div class="admin-view" id="view-products">
+  <div class="data-table-container">
+    <div class="table-header">
+      <h3 class="table-title">Gestion des produits</h3>
+      <button class="action-btn" id="addProductBtn" style="background: var(--color-success); color: white;">+ Ajouter</button>
+    </div>
+    <div id="productsTable"></div>
+  </div>
+</div>
+
+<!-- Modal Ajout/Édition Produit -->
+<div id="productModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+  <div style="background: var(--color-surface); border-radius: 16px; padding: 2rem; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+    <h3 style="font-family: var(--font-serif); font-size: 1.5rem; font-style: italic; margin-bottom: 1.5rem;" id="modalTitle">Ajouter un produit</h3>
+    <input type="hidden" id="productId">
+    <div class="form-group" style="margin-bottom: 1rem;">
+      <label style="display: block; font-size: 0.8rem; color: var(--color-text-dim); margin-bottom: 0.5rem;">Nom *</label>
+      <input type="text" id="prodName" style="width: 100%; padding: 0.8rem; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 8px;">
+    </div>
+    <div class="form-group" style="margin-bottom: 1rem;">
+      <label style="display: block; font-size: 0.8rem; color: var(--color-text-dim); margin-bottom: 0.5rem;">Slug (URL) *</label>
+      <input type="text" id="prodSlug" style="width: 100%; padding: 0.8rem; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 8px;">
+    </div>
+    <div class="form-group" style="margin-bottom: 1rem;">
+      <label style="display: block; font-size: 0.8rem; color: var(--color-text-dim); margin-bottom: 0.5rem;">Description</label>
+      <textarea id="prodDesc" rows="3" style="width: 100%; padding: 0.8rem; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 8px; font-family: inherit;"></textarea>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+      <div class="form-group">
+        <label style="display: block; font-size: 0.8rem; color: var(--color-text-dim); margin-bottom: 0.5rem;">Prix (DT) *</label>
+        <input type="number" id="prodPrice" step="0.01" style="width: 100%; padding: 0.8rem; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 8px;">
+      </div>
+      <div class="form-group">
+        <label style="display: block; font-size: 0.8rem; color: var(--color-text-dim); margin-bottom: 0.5rem;">Stock</label>
+        <input type="number" id="prodStock" style="width: 100%; padding: 0.8rem; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 8px;">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom: 1rem;">
+      <label style="display: block; font-size: 0.8rem; color: var(--color-text-dim); margin-bottom: 0.5rem;">URL Image</label>
+      <input type="text" id="prodImage" placeholder="https://..." style="width: 100%; padding: 0.8rem; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 8px;">
+    </div>
+    <div class="form-group" style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+      <input type="checkbox" id="prodActive" checked style="width: 18px; height: 18px;">
+      <label for="prodActive" style="font-size: 0.9rem;">Produit actif (visible en boutique)</label>
+    </div>
+    <div style="display: flex; gap: 0.8rem; justify-content: flex-end;">
+      <button id="cancelProductBtn" class="action-btn" style="padding: 0.7rem 1.2rem;">Annuler</button>
+      <button id="saveProductBtn" class="action-btn" style="background: var(--color-mauve-dark); color: white; padding: 0.7rem 1.5rem;">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+      </main>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initApp, auth } from '/shared/js/app.js';
+    import { showToast } from '/shared/js/toast.js';
+    
+    const API_URL = 'http://127.0.0.1:5000/api/v1';
+    
+    // 1. Check if admin
+    const user = await auth.checkStatus();
+    if (user && user.role === 'ADMIN') {
+      showDashboard(user);
+    } else {
+      document.getElementById('adminLogin').style.display = 'block';
+    }
+    
+    // 2. Login
+    document.getElementById('adminLoginBtn').addEventListener('click', async () => {
+      const email = document.getElementById('adminEmail').value;
+      const password = document.getElementById('adminPassword').value;
+      const errorDiv = document.getElementById('loginError');
+      
+      try {
+        const res = await fetch(`${API_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        
+        if (!res.ok) throw new Error(data.error || 'Erreur de connexion');
+        if (data.user.role !== 'ADMIN') throw new Error('Accès réservé aux administrateurs');
+        
+        auth.setSession(data.token, data.user);
+        showDashboard(data.user);
+      } catch (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.style.display = 'block';
+      }
+    });
+    
+    // 3. Show Dashboard
+    function showDashboard(user) {
+      document.getElementById('adminLogin').style.display = 'none';
+      document.getElementById('adminDashboard').style.display = 'grid';
+      document.getElementById('adminName').textContent = user.username || user.email;
+      initApp();
+      loadOverview();
+    }
+    
+    // 4. Navigation
+    document.querySelectorAll('.admin-nav-btn[data-view]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.admin-view').forEach(v => v.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(`view-${btn.dataset.view}`).classList.add('active');
+        
+        if (btn.dataset.view === 'orders') loadOrders();
+        if (btn.dataset.view === 'users') loadUsers();
+      });
+    });
+    
+    // 5. Logout
+    document.getElementById('adminLogout').addEventListener('click', () => {
+      auth.clearSession();
+      window.location.href = '/index.html'; 
+    });
+    
+    // 6. Load Overview
+    async function loadOverview() {
+      try {
+        const data = await auth.fetch('/admin/stats');
+        const s = data.stats;
+        
+        document.getElementById('statOrders').textContent = s.totalOrders;
+        document.getElementById('statUsers').textContent = s.totalUsers;
+        document.getElementById('statRevenue').textContent = `${s.totalRevenue.toFixed(2)} DT`;
+        document.getElementById('statPending').textContent = s.pendingOrders;
+        
+        // Recent orders table
+        const container = document.getElementById('recentOrdersTable');
+        if (data.recentOrders.length === 0) {
+          container.innerHTML = '<div class="empty-table">Aucune commande</div>';
+        } else {
+          container.innerHTML = `
+            <table>
+              <thead><tr><th>N°</th><th>Client</th><th>Total</th><th>Statut</th><th>Date</th></tr></thead>
+              <tbody>
+                ${data.recentOrders.map(o => `
+                  <tr>
+                    <td><strong>#${o.orderNumber || o.id.substring(0, 8)}</strong></td>
+                    <td>${o.user?.email || '-'}</td>
+                    <td>${parseFloat(o.total || 0).toFixed(2)} DT</td>
+                    <td><span class="status-pill status-${(o.paymentStatus || 'PENDING').toLowerCase()}">${o.paymentStatus || 'PENDING'}</span></td>
+                    <td>${new Date(o.createdAt).toLocaleDateString('fr-FR')}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+        }
+      } catch (error) {
+        console.error('Stats error:', error);
+      }
+    }
+    
+    // 7. Load All Orders
+        async function loadOrders() {
+      try {
+        const data = await auth.fetch('/admin/orders');
+        const container = document.getElementById('allOrdersTable');
+        
+        if (!data.orders || data.orders.length === 0) { 
+          container.innerHTML = '<div class="empty-table">Aucune commande</div>'; 
+          return; 
+        }
+        
+        // ✅ DEBUG: نضعه هنا قبل الـ return ليعمل بشكل صحيح
+        console.log("🔍 DEBUG COMMANDES:", data.orders.map(o => ({ 
+          id: o.id.substring(0,8), 
+          status: o.status, 
+          paymentStatus: o.paymentStatus 
+        })));
+        
+        container.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>N° Commande</th>
+                <th>Client & Téléphone</th>
+                <th>Détails</th>
+                <th>Total</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data.orders.map(o => {
+                // منطق الأزرار حسب الحالة (Workflow Professionnel)
+                let actionButtons = '';
+                const statusClass = o.status === 'PENDING' ? 'status-pending' : (o.status === 'ACCEPTED' ? 'status-processing' : 'status-paid');
+                const statusText = o.status === 'PENDING' ? 'En attente' : (o.status === 'ACCEPTED' ? 'Acceptée' : (o.status === 'CONFIRMED' ? 'Confirmée' : 'Terminée'));
+
+                if (o.status === 'PENDING') {
+                  actionButtons = `<button class="action-btn btn-accept" onclick="updateOrderWorkflow('${o.id}', 'ACCEPTED')">✅ Accepter</button>`;
+                } else if (o.status === 'ACCEPTED') {
+                  actionButtons = `<button class="action-btn btn-confirm" onclick="updateOrderWorkflow('${o.id}', 'CONFIRMED')">📞 Marquer Confirmé</button>`;
+                } else if (o.status === 'CONFIRMED' && o.paymentStatus !== 'PAID') {
+                  actionButtons = `<button class="action-btn btn-paid" onclick="updateOrderWorkflow('${o.id}', 'COMPLETED', 'PAID')">💰 Marquer Payé</button>`;
+                } else {
+                  actionButtons = `<span style="color: var(--color-success); font-weight: 600; font-size: 0.85rem;">✓ Clôturée</span>`;
+                }
+
+                // ✅ تجهيز عرض الهاتف والاسم بشكل أنيق
+                const username = o.user?.username || 'Anonyme';
+                const email = o.user?.email || '-';
+                const phone = o.user?.profile?.phone;
+                
+                const phoneDisplay = phone 
+                  ? `<div style="font-size: 0.8rem; color: var(--color-mauve-dark); margin-top: 2px;">📞 <a href="tel:${phone}" style="color: var(--color-mauve-dark); text-decoration: none; font-weight: 500;">${phone}</a></div>`
+                  : `<div style="font-size: 0.8rem; color: var(--color-error); margin-top: 2px;">⚠️ Non renseigné</div>`;
+
+                return `
+                <tr>
+                  <td><strong>#${o.orderNumber || o.id.substring(0, 8)}</strong></td>
+                  
+                  <!-- ✅ هنا التغيير: إضافة اسم المستخدم بشكل واضح -->
+                  <td>
+                    <div style="font-weight: 600; color: var(--color-text); font-size: 0.95rem;">
+                      👤 ${username}
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--color-text-dim); margin-top: 2px;">
+                      ✉️ ${email}
+                    </div>
+                    ${phoneDisplay}
+                  </td>
+
+                  <td>
+                    ${(o.items || []).map(item => `
+                      <div style="margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px dashed var(--color-border);">
+                        <div style="font-weight: 600; font-size: 0.9rem;">${item.quantity}x ${item.product?.name || 'Produit'}</div>
+                        ${item.customizationData && Object.keys(item.customizationData).length > 0 ? `
+                          <div style="font-size: 0.75rem; color: var(--color-mauve-dark); margin-top: 4px; background: var(--color-mauve-pale); padding: 4px 8px; border-radius: 6px; display: inline-block;">
+                            🎨 ${item.customizationData.restaurantName} | Table: ${item.customizationData.tableNumber}
+                          </div>
+                        ` : ''}
+                      </div>
+                    `).join('')}
+                  </td>
+                  <td><strong>${parseFloat(o.total || 0).toFixed(2)} DT</strong></td>
+                  <td><span class="status-pill ${statusClass}">${statusText}</span></td>
+                  <td>
+                    <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+                      ${actionButtons}
+                      ${o.items && o.items.some(item => item.customizationData) ? `
+                        <button class="action-btn" style="background: #e0e7ff; color: #3730a3; font-size: 0.75rem;" onclick='viewOrderDesigns(${JSON.stringify(o.items).replace(/'/g, "&#39;")})'>🖨️ Voir Design</button>
+                      ` : ''}
+                      <button class="action-btn danger" style="font-size: 0.75rem; margin-top: 4px;" onclick="deleteOrder('${o.id}')">🗑 Supprimer</button>
+                    </div>
+                  </td>
+                </tr>
+              `}).join('')}
+            </tbody>
+          </table>
+        `;
+      } catch (error) { 
+        console.error('Orders error:', error); 
+      }
+    }
+    
+    // 8. Load Users
+    async function loadUsers() {
+      try {
+        const data = await auth.fetch('/admin/users');
+        const container = document.getElementById('usersTable');
+        
+        if (data.users.length === 0) {
+          container.innerHTML = '<div class="empty-table">Aucun utilisateur</div>';
+          return;
+        }
+        
+        container.innerHTML = `
+          <table>
+            <thead><tr><th>Username</th><th>Email</th><th>Entreprise</th><th>Commandes</th><th>Inscrit le</th><th>Actions</th></tr></thead>
+            <tbody>
+              ${data.users.map(u => `
+                <tr>
+                  <td><strong>${u.username || '-'}</strong></td>
+                  <td>${u.email}</td>
+                  <td>${u.profile?.businessName || '-'}</td>
+                  <td>${u._count?.orders || 0}</td>
+                  <td>${new Date(u.createdAt).toLocaleDateString('fr-FR')}</td>
+                  <td>
+                    ${u.role !== 'ADMIN' ? `<button class="action-btn danger" onclick="deleteUser('${u.id}')">🗑</button>` : '<span style="color: var(--color-mauve); font-size: 0.8rem;">Admin</span>'}
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      } catch (error) {
+        console.error('Users error:', error);
+      }
+    }
+    
+    // 9. Actions (globales pour onclick)
+    window.updateOrderStatus = async (id, status) => {
+      if (!confirm('Marquer cette commande comme payée ?')) return;
+      try {
+        await auth.fetch(`/admin/orders/${id}/status`, {
+          method: 'PATCH',
+          body: JSON.stringify({ paymentStatus: status })
+        });
+        showToast('✓ Statut mis à jour avec succès', 'success');
+        loadOrders();
+        loadOverview();
+      } catch (error) {
+        showToast('Erreur: ' + error.message, 'error');
+      }
+    };
+    
+    window.deleteOrder = async (id) => {
+      if (!confirm('⚠️ Supprimer cette commande ? Cette action est irréversible.')) return;
+      try {
+        await auth.fetch(`/admin/orders/${id}`, { method: 'DELETE' });
+        showToast('✓ Commande supprimée', 'success');
+        loadOrders();
+        loadOverview();
+      } catch (error) {
+        showToast('Erreur: ' + error.message, 'error');
+      }
+    };
+    
+    window.deleteUser = async (id) => {
+      if (!confirm('Supprimer cet utilisateur ? Cette action est irréversible.')) return;
+      try {
+        await auth.fetch(`/admin/users/${id}`, { method: 'DELETE' });
+        showToast('✓ Utilisateur supprimé', 'success');
+        loadUsers();
+      } catch (error) {
+        showToast('Erreur: ' + error.message, 'error');
+      }
+    };
+    
+    document.getElementById('refreshOrders').addEventListener('click', loadOrders);
+    document.getElementById('refreshUsers').addEventListener('click', loadUsers);
+
+
+        // Navigation vers products
+    // (Le code existant de navigation gère déjà data-view="products")
+
+    // Load Products
+    async function loadProducts() {
+      try {
+        const data = await auth.fetch('/admin/products');
+        const container = document.getElementById('productsTable');
+        
+        if (!data.products || data.products.length === 0) {
+          container.innerHTML = '<div class="empty-table">Aucun produit</div>';
+          return;
+        }
+        
+        container.innerHTML = `
+          <table>
+            <thead><tr><th>Nom</th><th>Prix</th><th>Stock</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody>
+              ${data.products.map(p => `
+                <tr>
+                  <td><strong>${p.name}</strong><br><small style="color: var(--color-text-dim);">${p.slug}</small></td>
+                  <td>${parseFloat(p.basePrice).toFixed(2)} DT</td>
+                  <td>${p.stock}</td>
+                  <td><span class="status-pill ${p.isActive ? 'status-paid' : 'status-pending'}">${p.isActive ? 'Actif' : 'Inactif'}</span></td>
+                  <td>
+                    <button class="action-btn" onclick="editProduct('${p.id}')">✏️</button>
+                    <button class="action-btn danger" onclick="deleteProduct('${p.id}')">🗑</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      } catch (error) {
+        console.error('Products error:', error);
+      }
+    }
+
+    // Modal handlers
+    const modal = document.getElementById('productModal');
+    document.getElementById('addProductBtn')?.addEventListener('click', () => {
+      document.getElementById('modalTitle').textContent = 'Ajouter un produit';
+      document.getElementById('productId').value = '';
+      document.getElementById('prodName').value = '';
+      document.getElementById('prodSlug').value = '';
+      document.getElementById('prodDesc').value = '';
+      document.getElementById('prodPrice').value = '';
+      document.getElementById('prodStock').value = '';
+      document.getElementById('prodImage').value = '';
+      document.getElementById('prodActive').checked = true;
+      modal.style.display = 'flex';
+    });
+
+    document.getElementById('cancelProductBtn')?.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    document.getElementById('saveProductBtn')?.addEventListener('click', async () => {
+      const id = document.getElementById('productId').value;
+      const payload = {
+        name: document.getElementById('prodName').value,
+        slug: document.getElementById('prodSlug').value,
+        description: document.getElementById('prodDesc').value,
+        basePrice: document.getElementById('prodPrice').value,
+        stock: document.getElementById('prodStock').value,
+        image: document.getElementById('prodImage').value,
+        isActive: document.getElementById('prodActive').checked
+      };
+
+      try {
+        if (id) {
+          await auth.fetch(`/admin/products/${id}`, { method: 'PATCH', body: JSON.stringify(payload) });
+          showToast('✓ Produit mis à jour', 'success');
+        } else {
+          await auth.fetch('/admin/products', { method: 'POST', body: JSON.stringify(payload) });
+          showToast('✓ Produit créé avec succès', 'success');
+        }
+        modal.style.display = 'none';
+        loadProducts();
+      } catch (error) {
+        showToast('Erreur: ' + error.message, 'error');
+      }
+    });
+
+    window.editProduct = async (id) => {
+      try {
+        const data = await auth.fetch('/admin/products');
+        const product = data.products.find(p => p.id === id);
+        if (!product) return;
+
+        document.getElementById('modalTitle').textContent = 'Modifier le produit';
+        document.getElementById('productId').value = product.id;
+        document.getElementById('prodName').value = product.name;
+        document.getElementById('prodSlug').value = product.slug;
+        document.getElementById('prodDesc').value = product.description || '';
+        document.getElementById('prodPrice').value = product.basePrice;
+        document.getElementById('prodStock').value = product.stock;
+        document.getElementById('prodImage').value = product.image || '';
+        document.getElementById('prodActive').checked = product.isActive;
+        modal.style.display = 'flex';
+      } catch (error) {
+        showToast('Erreur: ' + error.message, 'error');
+      }
+    };
+
+    window.deleteProduct = async (id) => {
+      if (!confirm('⚠️ Supprimer ce produit ?')) return;
+      try {
+        await auth.fetch(`/admin/products/${id}`, { method: 'DELETE' });
+        showToast('✓ Produit supprimé', 'success');
+        loadProducts();
+      } catch (error) {
+        showToast('Erreur: ' + error.message, 'error');
+      }
+    };
+
+    // Charger products quand on clique sur l'onglet
+    document.querySelectorAll('.admin-nav-btn[data-view]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // ... code existant ...
+        if (btn.dataset.view === 'products') loadProducts();
+      });
+    });
+
+
+        // Modal Utilisateur
+    const userModal = document.getElementById('userModal');
+    document.getElementById('addUserBtn')?.addEventListener('click', () => userModal.style.display = 'flex');
+    document.getElementById('cancelUserBtn')?.addEventListener('click', () => userModal.style.display = 'none');
+
+    document.getElementById('saveUserBtn')?.addEventListener('click', async () => {
+      const payload = {
+        email: document.getElementById('newUserEmail').value,
+        username: document.getElementById('newUserUsername').value,
+        fullName: document.getElementById('newUserBusiness').value,
+        password: document.getElementById('newUserPassword').value,
+        role: document.getElementById('newUserAdmin').checked ? 'ADMIN' : 'CUSTOMER'
+      };
+
+      try {
+        await auth.fetch('/admin/users', { method: 'POST', body: JSON.stringify(payload) });
+        showToast('✓ Utilisateur créé', 'success');
+        userModal.style.display = 'none';
+        loadUsers();
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    });
+
+    // Ajouter le bouton "Admin" dans la liste des utilisateurs
+    // Modifie la fonction loadUsers() pour ajouter une colonne Actions avec "Promouvoir"
+    // Dans le map des users, ajoute :
+    /*
+    <td>
+      ${u.role !== 'ADMIN' ? `<button class="action-btn" onclick="promoteUser('${u.id}')">👑 Admin</button>` : '<span style="color: var(--color-mauve);">Admin</span>'}
+      <button class="action-btn danger" onclick="deleteUser('${u.id}')">🗑</button>
+    </td>
+    */
+
+    window.promoteUser = async (id) => {
+      if (!confirm('Donner les droits administrateur à cet utilisateur ?')) return;
+      try {
+        await auth.fetch(`/admin/users/${id}/role`, { method: 'PATCH', body: JSON.stringify({ role: 'ADMIN' }) });
+        showToast('✓ Utilisateur promu Admin', 'success');
+        loadUsers();
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    };
+  </script>
+
+<!-- Modal Ajout Utilisateur -->
+<div id="userModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 10000; align-items: center; justify-content: center;">
+  <div style="background: var(--color-surface); border-radius: 16px; padding: 2rem; max-width: 450px; width: 90%;">
+    <h3 style="font-family: var(--font-serif); font-style: italic; margin-bottom: 1.5rem;">Nouvel Utilisateur</h3>
+    <div class="form-group" style="margin-bottom: 1rem;"><label style="font-size: 0.8rem; color: var(--color-text-dim);">Email *</label><input type="email" id="newUserEmail" style="width: 100%; padding: 0.8rem; border: 1px solid var(--color-border); border-radius: 8px;"></div>
+    <div class="form-group" style="margin-bottom: 1rem;"><label style="font-size: 0.8rem; color: var(--color-text-dim);">Username *</label><input type="text" id="newUserUsername" style="width: 100%; padding: 0.8rem; border: 1px solid var(--color-border); border-radius: 8px;"></div>
+    <div class="form-group" style="margin-bottom: 1rem;"><label style="font-size: 0.8rem; color: var(--color-text-dim);">Nom Entreprise</label><input type="text" id="newUserBusiness" style="width: 100%; padding: 0.8rem; border: 1px solid var(--color-border); border-radius: 8px;"></div>
+    <div class="form-group" style="margin-bottom: 1rem;"><label style="font-size: 0.8rem; color: var(--color-text-dim);">Mot de passe *</label><input type="password" id="newUserPassword" style="width: 100%; padding: 0.8rem; border: 1px solid var(--color-border); border-radius: 8px;"></div>
+    <div class="form-group" style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+      <input type="checkbox" id="newUserAdmin" style="width: 18px; height: 18px;">
+      <label for="newUserAdmin" style="font-size: 0.9rem;">Donner les droits Administrateur</label>
+    </div>
+    <div style="display: flex; gap: 0.8rem; justify-content: flex-end;">
+      <button id="cancelUserBtn" class="action-btn">Annuler</button>
+      <button id="saveUserBtn" class="action-btn" style="background: var(--color-mauve-dark); color: white;">Créer</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

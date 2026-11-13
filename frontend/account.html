@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon Compte · Reservini</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/shared/css/theme.css">
+  
+  <style>
+    .account-page { padding: 120px 0 var(--space-3xl); min-height: 100vh; }
+    
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: var(--space-2xl);
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--space-xl);
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+    }
+    
+    .user-profile-header {
+      text-align: center;
+      padding-bottom: var(--space-lg);
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: var(--space-lg);
+    }
+    
+    .user-avatar-large {
+      width: 70px; height: 70px;
+      background: linear-gradient(135deg, var(--color-mauve) 0%, var(--color-mauve-dark) 100%);
+      color: var(--color-bg);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; font-weight: 600;
+      margin: 0 auto var(--space-sm);
+      font-family: var(--font-serif);
+    }
+    
+    .user-display-name {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-style: italic;
+      margin-bottom: 0.2rem;
+    }
+    
+    .user-email {
+      font-size: 0.8rem;
+      color: var(--color-text-dim);
+    }
+    
+    .sidebar-nav { display: flex; flex-direction: column; gap: var(--space-xs); }
+    
+    .sidebar-link {
+      display: flex; align-items: center; gap: var(--space-sm);
+      padding: 0.8rem 1rem;
+      border-radius: var(--radius-md);
+      color: var(--color-text-dim);
+      font-size: 0.9rem;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+      border: none; background: none; width: 100%; text-align: left;
+    }
+    
+    .sidebar-link:hover { background: var(--color-bg); color: var(--color-text); }
+    .sidebar-link.active { background: var(--color-mauve-pale); color: var(--color-mauve-dark); font-weight: 500; }
+    .sidebar-link.logout { color: var(--color-error); margin-top: var(--space-md); }
+    .sidebar-link.logout:hover { background: rgba(196, 107, 107, 0.1); }
+    
+    /* Main Content */
+    .main-content {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-2xl);
+      min-height: 500px;
+    }
+    
+    .tab-content { display: none; animation: fadeIn 0.4s ease; }
+    .tab-content.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .tab-header {
+      margin-bottom: var(--space-xl);
+      padding-bottom: var(--space-md);
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    .tab-title {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      font-style: italic;
+      margin-bottom: var(--space-xs);
+    }
+    
+    .tab-subtitle { color: var(--color-text-dim); font-size: 0.95rem; }
+    
+    /* Orders List */
+    .order-card {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-md);
+      transition: all var(--transition-fast);
+    }
+    
+    .order-card:hover { border-color: var(--color-mauve-light); }
+    
+    .order-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: var(--space-md); flex-wrap: wrap; gap: var(--space-sm);
+    }
+    
+    .order-number {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    
+    .order-date { font-size: 0.8rem; color: var(--color-text-dim); }
+    
+    .status-badge {
+      padding: 0.3rem 0.8rem;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    
+    .status-pending { background: rgba(212, 165, 116, 0.15); color: #b8860b; }
+    .status-processing { background: rgba(155, 126, 180, 0.15); color: var(--color-mauve-dark); }
+    .status-shipped { background: rgba(107, 155, 126, 0.15); color: var(--color-success); }
+    
+    .order-items {
+      display: flex; flex-direction: column; gap: var(--space-sm);
+      padding-top: var(--space-md); border-top: 1px dashed var(--color-border);
+    }
+    
+    .order-item-row {
+      display: flex; justify-content: space-between;
+      font-size: 0.9rem;
+    }
+    
+    .order-item-name { color: var(--color-text); }
+    .order-item-qty { color: var(--color-text-dim); margin-right: 0.5rem; }
+    .order-item-price { font-family: var(--font-serif); font-weight: 600; color: var(--color-mauve-dark); }
+    
+    .order-total-row {
+      display: flex; justify-content: space-between;
+      margin-top: var(--space-md); padding-top: var(--space-md);
+      border-top: 1px solid var(--color-border);
+      font-weight: 600;
+    }
+    
+    .order-total-value {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      color: var(--color-mauve-dark);
+    }
+    
+    /* Designs Grid */
+    .designs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: var(--space-lg);
+    }
+    
+    .design-card {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+    
+    .design-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--color-mauve); }
+    
+    .design-preview {
+      aspect-ratio: 3/4;
+      background: linear-gradient(135deg, var(--color-mauve-pale) 0%, var(--color-bg) 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-serif); font-size: 2rem; font-style: italic; color: var(--color-mauve-dark);
+    }
+    
+    .design-info { padding: var(--space-md); }
+    .design-name { font-size: 0.9rem; font-weight: 500; margin-bottom: 0.2rem; }
+    .design-date { font-size: 0.75rem; color: var(--color-text-dim); }
+    
+    .empty-state {
+      text-align: center; padding: 3rem 1rem; color: var(--color-text-dim);
+    }
+    .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
+    
+    @media (max-width: 968px) {
+      .dashboard-layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="/index.html" class="nav-logo"><div class="nav-logo-mark">R</div><span>Reservini</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/index.html">Accueil</a></li>
+        <li><a href="/shop.html">Boutique</a></li>
+        <li><a href="/studio.html">Studio</a></li>
+        <li><a href="/demo-lab.html">Démo</a></li>
+      </ul>
+      <div class="nav-right">
+        <div id="authContainer"><a href="/login.html" class="nav-cta">Connexion</a></div>
+        <button class="nav-mobile-toggle" id="mobileToggle"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ACCOUNT PAGE -->
+  <div class="account-page page-transition">
+    <div class="dashboard-layout">
+      
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="user-profile-header">
+          <div class="user-avatar-large" id="userAvatar">R</div>
+          <div class="user-display-name" id="userDisplayName">Chargement...</div>
+          <div class="user-email" id="userEmail">...</div>
+        </div>
+        
+        <nav class="sidebar-nav">
+          <button class="sidebar-link active" data-tab="orders">
+            <span>📦</span> Mes commandes
+          </button>
+          <button class="sidebar-link" data-tab="designs">
+            <span>🎨</span> Mes designs
+          </button>
+          <button class="sidebar-link" data-tab="profile">
+            <span>⚙️</span> Paramètres
+          </button>
+          <button class="sidebar-link logout" id="logoutBtn">
+            <span>🚪</span> Déconnexion
+          </button>
+        </nav>
+      </aside>
+      
+      <!-- Main Content -->
+      <main class="main-content">
+        
+        <!-- Tab: Orders -->
+        <div class="tab-content active" id="tab-orders">
+          <div class="tab-header">
+            <h1 class="tab-title">Mes commandes</h1>
+            <p class="tab-subtitle">Suivez l'état de vos commandes en temps réel.</p>
+          </div>
+          <div id="ordersList">
+            <div class="empty-state">
+              <div class="empty-icon">📦</div>
+              <p>Aucune commande pour le moment.</p>
+              <a href="/shop.html" class="btn btn-primary" style="margin-top: 1rem; display: inline-block;">Découvrir la boutique</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Tab: Designs -->
+        <div class="tab-content" id="tab-designs">
+          <div class="tab-header">
+            <h1 class="tab-title">Mes designs sauvegardés</h1>
+            <p class="tab-subtitle">Retrouvez vos créations et finalisez-les quand vous voulez.</p>
+          </div>
+          <div class="designs-grid" id="designsGrid">
+            <div class="empty-state" style="grid-column: 1 / -1;">
+              <div class="empty-icon">🎨</div>
+              <p>Aucun design sauvegardé.</p>
+              <a href="/studio.html" class="btn btn-primary" style="margin-top: 1rem; display: inline-block;">Ouvrir le Studio</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Tab: Profile -->
+        <div class="tab-content" id="tab-profile">
+  <div class="tab-header">
+    <h1 class="tab-title">Paramètres du compte</h1>
+    <p class="tab-subtitle">Gérez vos informations personnelles.</p>
+  </div>
+  <div style="max-width: 500px;">
+    <div class="form-group" style="margin-bottom: 1rem;">
+      <label style="display: block; font-size: 0.8rem; color: var(--color-text-dim); margin-bottom: 0.5rem;">Nom d'utilisateur</label>
+      <input type="text" id="profileUsername" style="width: 100%; padding: 0.8rem; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md);">
+    </div>
+    <div class="form-group" style="margin-bottom: 1rem;">
+      <label style="display: block; font-size: 0.8rem; color: var(--color-text-dim); margin-bottom: 0.5rem;">Adresse email actuelle</label>
+      <input type="email" id="profileEmail" readonly style="width: 100%; padding: 0.8rem; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); opacity: 0.7;">
+    </div>
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label style="display: block; font-size: 0.8rem; color: var(--color-text-dim); margin-bottom: 0.5rem;">Nouvel email (nécessite vérification)</label>
+      <input type="email" id="profileNewEmail" placeholder="nouvel@email.com" style="width: 100%; padding: 0.8rem; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md);">
+    </div>
+    <button class="btn btn-primary" id="saveProfileBtn" style="width: 100%;">Enregistrer les modifications</button>
+  </div>
+
+  <!-- Modal Vérification Email -->
+  <div id="emailVerifyModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
+    <div style="background: var(--color-surface); padding: 2rem; border-radius: 16px; max-width: 400px; text-align: center;">
+      <h3 style="font-family: var(--font-serif); font-style: italic; margin-bottom: 1rem;">Vérifiez votre email</h3>
+      <p style="font-size: 0.9rem; color: var(--color-text-dim); margin-bottom: 1.5rem;">Entrez le code envoyé à votre nouvel email.</p>
+      <input type="text" id="emailCodeInput" maxlength="6" placeholder="000000" style="width: 100%; padding: 1rem; text-align: center; font-size: 1.5rem; letter-spacing: 5px; border: 1px solid var(--color-border); border-radius: 10px; margin-bottom: 1rem;">
+      <div style="display: flex; gap: 1rem;">
+        <button id="cancelEmailBtn" class="btn btn-secondary" style="flex: 1;">Annuler</button>
+        <button id="confirmEmailBtn" class="btn btn-primary" style="flex: 1;">Confirmer</button>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </main>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>© 2026 Reservini. Tous droits réservés.</div>
+        <div style="display: flex; gap: var(--space-lg);">
+          <a href="/index.html">Accueil</a>
+          <a href="/shop.html">Boutique</a>
+          <a href="/studio.html">Studio</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { initApp, auth } from '/shared/js/app.js';
+    
+    // 1. Check Auth
+    const user = await auth.checkStatus();
+    import { showToast } from '/shared/js/toast.js';
+
+    if (!user) {
+      window.location.href = '/login.html';
+    } else {
+      initApp();
+      populateUserData(user);
+      loadOrders();
+      loadSavedDesigns();
+    }
+    
+    // 2. Populate User Data
+    function populateUserData(user) {
+      const name = user.profile?.businessName || user.username || 'Client';
+      const initials = name.substring(0, 2).toUpperCase();
+      
+      document.getElementById('userAvatar').textContent = initials;
+      document.getElementById('userDisplayName').textContent = name;
+      document.getElementById('userEmail').textContent = user.email;
+      
+      document.getElementById('profileUsername').value = user.username || '';
+      document.getElementById('profileEmail').value = user.email;
+    }
+    
+    // 3. Tab Switching
+    document.querySelectorAll('.sidebar-link[data-tab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sidebar-link').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        
+        btn.classList.add('active');
+        document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+      });
+    });
+    
+    // 4. Logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      auth.clearSession();
+      window.location.href = '/index.html';
+    });
+    
+    // 5. Load Orders (Mock data for now, replace with API call later)
+        // 5. Load Orders (Version robuste avec debug)
+    async function loadOrders() {
+      const container = document.getElementById('ordersList');
+      
+      try {
+        console.log('📦 Tentative de chargement des commandes...');
+        
+        const data = await auth.fetch('/orders');
+        console.log('✅ Réponse backend:', data);
+        
+        const orders = data.orders || [];
+        console.log(`📋 ${orders.length} commande(s) trouvée(s)`);
+
+        if (orders.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">📦</div>
+              <p>Aucune commande pour le moment.</p>
+              <a href="/shop.html" class="btn btn-primary" style="margin-top: 1rem; display: inline-block;">Découvrir la boutique</a>
+            </div>
+          `;
+          return;
+        }
+
+        // Affichage des commandes réelles
+        
+        container.innerHTML = orders.map(order => {
+          const date = new Date(order.createdAt).toLocaleDateString('fr-FR', {
+            year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+          });
+          
+          let statusClass = 'status-pending';
+          let statusText = 'En attente';
+          if (order.status === 'PROCESSING' || order.paymentStatus === 'PAID') { 
+            statusClass = 'status-processing'; 
+            statusText = 'En préparation'; 
+          }
+          if (order.status === 'SHIPPED') { 
+            statusClass = 'status-shipped'; 
+            statusText = 'Expédiée'; 
+          }
+
+          const orderNum = order.orderNumber || `CMD-${order.id.substring(0, 8).toUpperCase()}`;
+
+          return `
+            <div class="order-card">
+              <div class="order-header">
+                <div>
+                  <div class="order-number">Commande #${orderNum}</div>
+                  <div class="order-date">${date}</div>
+                </div>
+                <span class="status-badge ${statusClass}">${statusText}</span>
+              </div>
+              <div class="order-items">
+                ${(order.items || []).map(item => `
+                  <div class="order-item-row">
+                    <span><span class="order-item-qty">${item.quantity}×</span> ${item.productName || 'Article'}</span>
+                    <span class="order-item-price">${(parseFloat(item.unitPrice || 0) * item.quantity).toFixed(2)} DT</span>
+                  </div>
+                `).join('')}
+              </div>
+              <div class="order-total-row">
+                <span>Total</span>
+                <span class="order-total-value">${parseFloat(order.total || 0).toFixed(2)} DT</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+      } catch (error) {
+        console.error('❌ Erreur chargement commandes:', error);
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">⚠️</div>
+            <p><strong>Erreur :</strong> ${error.message}</p>
+            <p style="font-size: 0.85rem; margin-top: 1rem;">
+              💡 Vérifie que le backend tourne et que tu as fait au moins une commande via le checkout.
+            </p>
+            <a href="/checkout.html" class="btn btn-primary" style="margin-top: 1rem; display: inline-block;">Faire une commande test</a>
+          </div>
+        `;
+      }
+    }
+    
+    // 6. Load Saved Designs
+    function loadSavedDesigns() {
+      const container = document.getElementById('designsGrid');
+      const saved = localStorage.getItem('reservini_saved_design');
+      
+      if (!saved) {
+        container.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="empty-icon">🎨</div>
+            <p>Aucun design sauvegardé.</p>
+            <a href="/studio.html" class="btn btn-primary" style="margin-top: 1rem; display: inline-block;">Ouvrir le Studio</a>
+          </div>
+        `;
+        return;
+      }
+      
+      try {
+        const design = JSON.parse(saved);
+        const date = new Date(design.savedAt).toLocaleDateString('fr-FR', {
+          year: 'numeric', month: 'long', day: 'numeric'
+        });
+        
+        const templateColors = {
+          noir: 'background: linear-gradient(135deg, #2a1f33 0%, #1a1222 100%); color: #e8dff0;',
+          ivory: 'background: linear-gradient(135deg, #f5f0e1 0%, #e8dfc5 100%); color: #5d4b6b;',
+          acid: 'background: linear-gradient(135deg, #c9b8d9 0%, #9b7eb4 100%); color: #2a1f33;',
+          ember: 'background: linear-gradient(135deg, #8b6f47 0%, #5d4b2e 100%); color: #f5f0e1;'
+        };
+        
+        const style = templateColors[design.template] || templateColors.noir;
+        const logoHtml = design.logoData 
+          ? `<img src="${design.logoData}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">`
+          : `<span style="font-family: var(--font-serif); font-style: italic; font-size: 1.5rem;">R</span>`;
+        
+        container.innerHTML = `
+          <div class="design-card" onclick="window.location.href='/studio.html'">
+            <div class="design-preview" style="${style}">
+              ${logoHtml}
+            </div>
+            <div class="design-info">
+              <div class="design-name">${design.restaurantName || 'Mon Restaurant'}</div>
+              <div class="design-date">Table ${design.tableNumber || '-'} · ${date}</div>
+            </div>
+          </div>
+        `;
+      } catch (e) {
+        console.error('Failed to load design:', e);
+      }
+    }
+
+
+        // Gestion du profil
+    const saveProfileBtn = document.getElementById('saveProfileBtn');
+    const emailModal = document.getElementById('emailVerifyModal');
+    
+    saveProfileBtn?.addEventListener('click', async () => {
+      const username = document.getElementById('profileUsername').value;
+      const newEmail = document.getElementById('profileNewEmail').value;
+      
+      try {
+        const data = await auth.fetch('/auth/profile', {
+          method: 'PATCH',
+          body: JSON.stringify({ username, newEmail })
+        });
+        
+        if (data.requiresVerification) {
+          emailModal.style.display = 'flex';
+        } else {
+          showToast('✓ Profil mis à jour', 'success');
+          populateUserData(data.user);
+        }
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    });
+
+    document.getElementById('cancelEmailBtn')?.addEventListener('click', () => {
+      emailModal.style.display = 'none';
+    });
+
+    document.getElementById('confirmEmailBtn')?.addEventListener('click', async () => {
+      const code = document.getElementById('emailCodeInput').value;
+      try {
+        const data = await auth.fetch('/auth/verify-email-change', {
+          method: 'POST',
+          body: JSON.stringify({ code })
+        });
+        showToast('✓ Email mis à jour avec succès', 'success');
+        emailModal.style.display = 'none';
+        populateUserData(data.user);
+        document.getElementById('profileNewEmail').value = '';
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    });
+  </script>
+</body>
+</html>

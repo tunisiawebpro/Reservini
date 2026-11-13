@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card Studio · Reservini</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  
+  <link rel="stylesheet" href="/shared/css/theme.css">
+  
+  <style>
+    /* ============================================
+       STUDIO LAYOUT
+       ============================================ */
+    .studio-page {
+      padding: 100px 0 var(--space-3xl);
+      min-height: 100vh;
+    }
+    
+    .studio-header {
+      text-align: center;
+      margin-bottom: var(--space-2xl);
+    }
+    
+    .studio-header h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: var(--space-sm);
+      font-style: italic;
+    }
+    
+    .studio-header p {
+      color: var(--color-text-dim);
+      font-size: 1.05rem;
+    }
+    
+    .studio-container {
+      display: grid;
+      grid-template-columns: 320px 1fr 340px;
+      gap: var(--space-lg);
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 var(--space-xl);
+    }
+    
+    /* Panels */
+    .panel {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      max-height: calc(100vh - 180px);
+      overflow-y: auto;
+    }
+    
+    .panel::-webkit-scrollbar { width: 6px; }
+    .panel::-webkit-scrollbar-track { background: transparent; }
+    .panel::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+    
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-md);
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    .panel-title {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-style: italic;
+    }
+    
+    .panel-badge {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      background: var(--color-mauve-pale);
+      color: var(--color-mauve-dark);
+      border-radius: var(--radius-full);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    
+    /* Sections */
+    .section { margin-bottom: var(--space-lg); }
+    
+    .section-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--color-text-dim);
+      margin-bottom: var(--space-sm);
+      font-weight: 500;
+    }
+    
+    .form-group { margin-bottom: var(--space-md); }
+    
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--color-text-dim);
+      margin-bottom: var(--space-xs);
+    }
+    
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      color: var(--color-text);
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      transition: all var(--transition-fast);
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--color-mauve);
+      box-shadow: 0 0 0 3px rgba(155, 126, 180, 0.1);
+    }
+    
+    /* Templates */
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-sm);
+    }
+    
+    .template-option {
+      position: relative;
+      aspect-ratio: 3/4;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      border: 2px solid var(--color-border);
+      overflow: hidden;
+      transition: all var(--transition-fast);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+      text-align: center;
+    }
+    
+    .template-option:hover {
+      transform: translateY(-2px);
+      border-color: var(--color-mauve);
+    }
+    
+    .template-option.active {
+      border-color: var(--color-mauve);
+      box-shadow: 0 0 0 3px rgba(155, 126, 180, 0.15);
+    }
+    
+    .template-option.active::after {
+      content: '✓';
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 18px;
+      height: 18px;
+      background: var(--color-mauve);
+      color: var(--color-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: bold;
+    }
+    
+    .template-noir { background: linear-gradient(135deg, #2a1f33 0%, #1a1222 100%); color: #e8dff0; }
+    .template-ivory { background: linear-gradient(135deg, #f5f0e1 0%, #e8dfc5 100%); color: #5d4b6b; }
+    .template-acid { background: linear-gradient(135deg, #c9b8d9 0%, #9b7eb4 100%); color: #2a1f33; }
+    .template-ember { background: linear-gradient(135deg, #8b6f47 0%, #5d4b2e 100%); color: #f5f0e1; }
+    
+    .template-name {
+      font-family: var(--font-serif);
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 0.4rem;
+      font-style: italic;
+    }
+    
+    .template-preview { font-size: 1.3rem; margin-bottom: 0.2rem; font-family: var(--font-serif); font-style: italic; }
+    
+    /* Logo upload */
+    .logo-upload {
+      border: 2px dashed var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      background: var(--color-bg);
+    }
+    
+    .logo-upload:hover {
+      border-color: var(--color-mauve);
+      background: var(--color-mauve-pale);
+    }
+    
+    .logo-upload.has-logo { padding: var(--space-sm); }
+    
+    .logo-upload-icon { font-size: 1.5rem; color: var(--color-text-dim); margin-bottom: var(--space-xs); }
+    .logo-upload-text { font-size: 0.8rem; color: var(--color-text-dim); }
+    .logo-upload-text strong { color: var(--color-mauve-dark); }
+    .logo-preview-img { max-width: 100%; max-height: 100px; object-fit: contain; }
+    
+    .logo-remove {
+      margin-top: var(--space-sm);
+      padding: 0.3rem 0.8rem;
+      background: transparent;
+      color: var(--color-error);
+      border: 1px solid var(--color-error);
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    
+    /* Quantity stepper */
+    .quantity-stepper {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 0.3rem;
+    }
+    
+    .qty-btn {
+      width: 32px;
+      height: 32px;
+      background: var(--color-mauve-pale);
+      color: var(--color-mauve-dark);
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all var(--transition-fast);
+    }
+    
+    .qty-btn:hover {
+      background: var(--color-mauve);
+      color: var(--color-bg);
+    }
+    
+    .qty-input {
+      flex: 1;
+      text-align: center;
+      background: transparent !important;
+      border: none !important;
+      color: var(--color-text);
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.3rem !important;
+    }
+    
+    .qty-input:focus { outline: none; }
+    
+    /* Preview panel */
+    .preview-panel {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      min-height: 600px;
+    }
+    
+    .preview-panel::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(155, 126, 180, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    
+    .preview-header {
+      position: absolute;
+      top: var(--space-lg);
+      left: var(--space-lg);
+      right: var(--space-lg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+    
+    .preview-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--color-text-dim);
+    }
+    
+    .preview-controls { display: flex; gap: var(--space-xs); }
+    
+    .preview-btn {
+      padding: 0.4rem 0.9rem;
+      background: var(--color-bg);
+      color: var(--color-text-dim);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all var(--transition-fast);
+    }
+    
+    .preview-btn:hover {
+      color: var(--color-text);
+      border-color: var(--color-mauve);
+    }
+    
+    .preview-btn.active {
+      background: var(--color-mauve-dark);
+      color: var(--color-bg);
+      border-color: var(--color-mauve-dark);
+    }
+    
+    /* 3D Card */
+    .card-scene {
+      perspective: 1500px;
+      width: 300px;
+      height: 480px;
+      position: relative;
+      z-index: 5;
+    }
+    
+    .card-3d {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+    
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      transition: box-shadow var(--transition-smooth);
+    }
+    
+    .card-face:hover {
+      box-shadow: var(--shadow-lg), 0 0 40px rgba(155, 126, 180, 0.2);
+    }
+    
+    .card-front {
+      background: linear-gradient(135deg, #f5f0e1 0%, #e8dfc5 100%);
+      color: #5d4b6b;
+      border: 1px solid #d4c9a8;
+    }
+    
+    .card-back {
+      background: linear-gradient(135deg, #f5f0e1 0%, #e8dfc5 100%);
+      color: #5d4b6b;
+      border: 1px solid #d4c9a8;
+      transform: rotateY(180deg);
+    }
+    
+    .card-face.template-noir { background: linear-gradient(135deg, #2a1f33 0%, #1a1222 100%); color: #e8dff0; border-color: #9b7eb4; }
+    .card-face.template-ivory { background: linear-gradient(135deg, #f5f0e1 0%, #e8dfc5 100%); color: #5d4b6b; border-color: #d4c9a8; }
+    .card-face.template-acid { background: linear-gradient(135deg, #c9b8d9 0%, #9b7eb4 100%); color: #2a1f33; border-color: #7d6196; }
+    .card-face.template-ember { background: linear-gradient(135deg, #8b6f47 0%, #5d4b2e 100%); color: #f5f0e1; border-color: #d4a574; }
+    
+    /* Front face */
+    .card-front-content {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem;
+      position: relative;
+    }
+    
+    .nfc-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.7rem;
+      background: rgba(155, 126, 180, 0.15);
+      border: 1px solid rgba(155, 126, 180, 0.3);
+      border-radius: 20px;
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    
+    .nfc-icon {
+      width: 12px;
+      height: 12px;
+      position: relative;
+    }
+    
+    .nfc-icon::before,
+    .nfc-icon::after {
+      content: '';
+      position: absolute;
+      border: 1.5px solid currentColor;
+      border-radius: 50%;
+      border-left-color: transparent;
+      border-bottom-color: transparent;
+      transform: rotate(-45deg);
+    }
+    
+    .nfc-icon::before { width: 7px; height: 7px; top: 2.5px; left: 2.5px; }
+    .nfc-icon::after { width: 12px; height: 12px; top: 0; left: 0; }
+    
+    .card-logo {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: rgba(155, 126, 180, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1px solid rgba(155, 126, 180, 0.2);
+      margin-top: 2rem;
+    }
+    
+    .card-logo img { width: 100%; height: 100%; object-fit: contain; }
+    
+    .card-logo-placeholder {
+      font-size: 0.6rem;
+      color: currentColor;
+      opacity: 0.4;
+      letter-spacing: 2px;
+    }
+    
+    .card-name {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 1rem;
+      line-height: 1.2;
+      padding: 0 1rem;
+      font-style: italic;
+    }
+    
+    .qr-frame {
+      width: 160px;
+      height: 160px;
+      background: #fff;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: var(--shadow-md);
+      margin: 1rem 0;
+    }
+    
+    .qr-frame::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border: 1px solid currentColor;
+      border-radius: calc(var(--radius-md) + 4px);
+      opacity: 0.2;
+    }
+    
+    .qr-container { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .qr-container canvas, .qr-container img { width: 100% !important; height: 100% !important; }
+    
+    .card-table { text-align: center; margin-bottom: 1rem; }
+    
+    .card-table-label {
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      opacity: 0.6;
+      margin-bottom: 0.3rem;
+    }
+    
+    .card-table-number {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--color-mauve);
+      font-style: italic;
+    }
+    
+    .tap-instruction {
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.5;
+      text-align: center;
+    }
+    
+    /* Back face */
+    .card-back-content {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+    }
+    
+    .reservini-logo-mark {
+      width: 100px;
+      height: 100px;
+      background: var(--color-mauve);
+      color: var(--color-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-lg);
+      font-size: 3rem;
+      font-weight: 700;
+      font-family: var(--font-serif);
+      font-style: italic;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-md);
+    }
+    
+    .template-noir .reservini-logo-mark { background: #9b7eb4; }
+    .template-ivory .reservini-logo-mark { background: #5d4b6b; color: #f5f0e1; }
+    .template-acid .reservini-logo-mark { background: #2a1f33; color: #c9b8d9; }
+    .template-ember .reservini-logo-mark { background: #d4a574; color: #5d4b2e; }
+    
+    .reservini-name {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      font-style: italic;
+    }
+    
+    .reservini-tagline {
+      font-size: 0.75rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      opacity: 0.6;
+      margin-bottom: 2rem;
+    }
+    
+    .reservini-divider {
+      width: 60px;
+      height: 1px;
+      background: currentColor;
+      opacity: 0.3;
+      margin-bottom: 2rem;
+    }
+    
+    .reservini-website {
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      opacity: 0.7;
+      font-weight: 500;
+    }
+    
+    .reservini-serial {
+      position: absolute;
+      bottom: 1.5rem;
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      opacity: 0.3;
+      text-transform: uppercase;
+    }
+    
+    /* Summary panel */
+    .summary-section {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+    
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      font-size: 0.9rem;
+    }
+    
+    .summary-row.total {
+      border-top: 1px solid var(--color-border);
+      margin-top: 0.5rem;
+      padding-top: var(--space-md);
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    
+    .summary-row .label { color: var(--color-text-dim); }
+    .summary-row .value { color: var(--color-text); font-weight: 500; }
+    
+    .summary-row.total .value {
+      color: var(--color-mauve);
+      font-size: 1.4rem;
+      font-family: var(--font-serif);
+      font-style: italic;
+    }
+    
+    .price-breakdown {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      margin-top: 0.25rem;
+    }
+    
+    /* Buttons */
+    .btn-primary {
+      width: 100%;
+      padding: 1rem;
+      background: var(--color-mauve-dark);
+      color: var(--color-bg);
+      font-weight: 500;
+      border: none;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+    
+    .btn-primary:hover:not(:disabled) {
+      background: var(--color-mauve);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .btn-primary:disabled {
+      background: var(--color-border);
+      color: var(--color-text-muted);
+      cursor: not-allowed;
+    }
+    
+    .btn-secondary {
+      width: 100%;
+      padding: 0.9rem;
+      background: transparent;
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+    }
+    
+    .btn-secondary:hover {
+      border-color: var(--color-mauve);
+      color: var(--color-mauve-dark);
+    }
+    
+    /* Toast */
+    .success-toast {
+      position: fixed;
+      bottom: var(--space-xl);
+      right: var(--space-xl);
+      background: var(--color-success);
+      color: var(--color-bg);
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-weight: 600;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all var(--transition-spring);
+      z-index: 1000;
+    }
+    
+    .success-toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .studio-container {
+        grid-template-columns: 280px 1fr 300px;
+        gap: var(--space-md);
+      }
+    }
+    
+    @media (max-width: 968px) {
+      .studio-container {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+      }
+      
+      .panel { max-height: none; }
+      
+      .preview-panel {
+        min-height: 500px;
+        order: -1;
+      }
+      
+      .card-scene {
+        width: 260px;
+        height: 420px;
+      }
+    }
+    
+    @media (max-width: 640px) {
+      .card-scene { width: 240px; height: 380px; }
+      .card-name { font-size: 1.2rem; }
+      .reservini-name { font-size: 1.6rem; }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="/index.html" class="nav-logo">
+        <div class="nav-logo-mark">R</div>
+        <span>Reservini</span>
+      </a>
+      
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/index.html">Accueil</a></li>
+        <li><a href="/shop.html">Boutique</a></li>
+        <li><a href="/studio.html">Studio</a></li>
+        <li><a href="/demo-lab.html">Démo</a></li>
+        <li><a href="/index.html#faq">FAQ</a></li>
+      </ul>
+      
+      <div class="nav-right">
+        <div id="authContainer">
+          <a href="/login.html" class="nav-cta">Connexion</a>
+        </div>
+        <button class="nav-mobile-toggle" id="mobileToggle">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- STUDIO PAGE -->
+  <div class="studio-page page-transition">
+    <div class="container">
+      <div class="studio-header">
+        <div class="section-label" style="justify-content: center;">Card Studio</div>
+        <h1>Concevez votre carte.</h1>
+        <p>Personnalisez chaque détail. L'aperçu se met à jour en temps réel.</p>
+      </div>
+    </div>
+    
+    <div class="studio-container">
+      <!-- LEFT PANEL: Controls -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Personnaliser</h2>
+          <span class="panel-badge">Live</span>
+        </div>
+
+        <!-- Templates -->
+        <div class="section">
+          <div class="section-title">01 — Style</div>
+          <div class="template-grid">
+            <div class="template-option template-noir active" data-template="noir">
+              <div class="template-preview">R</div>
+              <div class="template-name">Noir Mauve</div>
+            </div>
+            <div class="template-option template-ivory" data-template="ivory">
+              <div class="template-preview">R</div>
+              <div class="template-name">Ivoire</div>
+            </div>
+            <div class="template-option template-acid" data-template="acid">
+              <div class="template-preview">R</div>
+              <div class="template-name">Mauve Pop</div>
+            </div>
+            <div class="template-option template-ember" data-template="ember">
+              <div class="template-preview">R</div>
+              <div class="template-name">Chêne Doré</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Branding -->
+        <div class="section">
+          <div class="section-title">02 — Identité</div>
+          
+          <div class="form-group">
+            <label>Nom du restaurant</label>
+            <input type="text" id="input-restaurant" value="Café Lumière" placeholder="Votre établissement">
+          </div>
+
+          <div class="form-group">
+            <label>Numéro de table</label>
+            <input type="text" id="input-table" value="08" placeholder="ex: 08, A1, VIP">
+          </div>
+
+          <div class="form-group">
+            <label>Style de police</label>
+            <select id="select-font">
+              <option value="serif">Élégant (Serif)</option>
+              <option value="sans">Moderne (Sans)</option>
+              <option value="mono">Machine (Mono)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Logo -->
+        <div class="section">
+          <div class="section-title">03 — Logo</div>
+          <div class="logo-upload" id="logo-upload">
+            <input type="file" id="input-logo" accept="image/png, image/jpeg, image/svg+xml" style="display: none;">
+            <div id="logo-upload-content">
+              <div class="logo-upload-icon">⬆</div>
+              <div class="logo-upload-text">
+                <strong>Cliquez pour uploader</strong><br>
+                PNG, JPG (max 5MB)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CENTER PANEL: Preview -->
+      <div class="preview-panel">
+        <div class="preview-header">
+          <span class="preview-label">Aperçu en direct</span>
+          <div class="preview-controls">
+            <button class="preview-btn active" data-side="front">Recto</button>
+            <button class="preview-btn" data-side="back">Verso</button>
+          </div>
+        </div>
+
+        <div class="card-scene" id="card-scene">
+          <div class="card-3d" id="card-3d">
+            <!-- FRONT -->
+            <div class="card-face card-front template-noir" id="card-front">
+              <div class="card-front-content">
+                <div class="nfc-badge">
+                  <div class="nfc-icon"></div>
+                  <span>NFC</span>
+                </div>
+                
+                <div class="card-logo" id="card-logo">
+                  <span class="card-logo-placeholder">LOGO</span>
+                </div>
+                
+                <div class="card-name" id="card-name">Café Lumière</div>
+                
+                <div class="qr-frame">
+                  <div class="qr-container" id="qr-container"></div>
+                </div>
+                
+                <div class="card-table">
+                  <div class="card-table-label">Table N°</div>
+                  <div class="card-table-number" id="card-table-number">08</div>
+                </div>
+                
+                <div class="tap-instruction">Tapez ou scannez pour commander</div>
+              </div>
+            </div>
+
+            <!-- BACK -->
+            <div class="card-face card-back template-noir" id="card-back">
+              <div class="card-back-content">
+                <div class="reservini-logo-mark">R</div>
+                <div class="reservini-name">Reservini</div>
+                <div class="reservini-tagline">Smart Table Cards</div>
+                <div class="reservini-divider"></div>
+                <div class="reservini-website">reservini.com</div>
+                <div class="reservini-serial">N° 0001 / 2026</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL: Summary -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Votre commande</h2>
+        </div>
+
+        <!-- Quantity -->
+        <div class="section">
+          <div class="section-title">Quantité</div>
+          <div class="quantity-stepper">
+            <button class="qty-btn" id="qty-minus">−</button>
+            <input type="number" class="qty-input" id="input-quantity" value="10" min="1">
+            <button class="qty-btn" id="qty-plus">+</button>
+          </div>
+        </div>
+
+        <!-- Price Breakdown -->
+        <div class="summary-section">
+          <div class="summary-row">
+            <span class="label">Prix unitaire</span>
+            <span class="value" id="summary-base">15,00 DT</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Quantité</span>
+            <span class="value" id="summary-qty">× 10</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Style</span>
+            <span class="value" id="summary-template">Noir Mauve</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Personnalisation</span>
+            <span class="value">Inclus</span>
+          </div>
+          <div class="summary-row total">
+            <span class="label">Total</span>
+            <span class="value" id="summary-total">150,00 DT</span>
+          </div>
+          <div class="price-breakdown" id="price-breakdown">
+            15,00 DT × 10 cartes
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <button class="btn-secondary" id="btn-save">
+          💾 Sauvegarder le design
+        </button>
+        
+        <button class="btn-primary" id="btn-add-to-cart">
+          🛒 Ajouter au panier
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Toast -->
+  <div class="success-toast" id="success-toast">
+    <span>✓</span>
+    <span id="toast-message">Ajouté au panier avec succès !</span>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>© 2026 Reservini. Tous droits réservés.</div>
+        <div style="display: flex; gap: var(--space-lg);">
+          <a href="/index.html">Accueil</a>
+          <a href="/shop.html">Boutique</a>
+          <a href="/studio.html">Studio</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+    <script type="module">
+    import { initApp, auth } from '/shared/js/app.js';
+    import { showToast, showToastWithAction } from '/shared/js/toast.js';
+
+    initApp();
+
+    // 1. Détecter le type de produit depuis l'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const productType = urlParams.get('type') || 'card-only';
+    
+    const PRICING = {
+      'card-only': { base: 10, label: 'Carte NFC + QR' },
+      'full-pack': { base: 300, label: 'Pack Complet (Carte + Platform)' }
+    };
+
+    // 2. État initial
+    const state = {
+    productType: productType,
+    // ✅ NOUVEAU : On utilise les SLUGS EXACTS de la base de données
+    productId: productType === 'card-only' ? 'carte-nfc-qr' : 'pack-complet', 
+    basePrice: PRICING[productType].base,
+    template: 'noir',
+    restaurantName: 'Café Lumière',
+    tableNumber: '08',
+    font: 'serif',
+    logoData: null,
+    logoName: null,
+    quantity: productType === 'card-only' ? 10 : 1,
+    side: 'front'
+  };
+
+    const TEMPLATES = {
+      noir: { name: 'Noir Mauve', className: 'template-noir', price: 0 },
+      ivory: { name: 'Ivoire', className: 'template-ivory', price: 0 },
+      acid: { name: 'Mauve Pop', className: 'template-acid', price: 0 },
+      ember: { name: 'Chêne Doré', className: 'template-ember', price: 0 }
+    };
+
+    // 3. Éléments du DOM (Correspondance EXACTE avec ton HTML)
+    const els = {
+      cardFront: document.getElementById('card-front'),
+      cardBack: document.getElementById('card-back'),
+      inputRestaurant: document.getElementById('input-restaurant'),
+      inputTable: document.getElementById('input-table'),
+      selectFont: document.getElementById('select-font'),
+      inputQty: document.getElementById('input-quantity'),
+      inputLogo: document.getElementById('input-logo'),
+      logoUpload: document.getElementById('logo-upload'),
+      logoUploadContent: document.getElementById('logo-upload-content'),
+      btnAddToCart: document.getElementById('btn-add-to-cart'),
+      btnSave: document.getElementById('btn-save'),
+      summaryBase: document.getElementById('summary-base'),
+      summaryQty: document.getElementById('summary-qty'),
+      summaryTemplate: document.getElementById('summary-template'),
+      summaryTotal: document.getElementById('summary-total'),
+      priceBreakdown: document.getElementById('price-breakdown'),
+      qtyMinus: document.getElementById('qty-minus'),
+      qtyPlus: document.getElementById('qty-plus'),
+      cardName: document.getElementById('card-name'),
+      cardTableNumber: document.getElementById('card-table-number'),
+      cardLogo: document.getElementById('card-logo'),
+      card3d: document.getElementById('card-3d')
+    };
+
+    // 4. Initialisation des valeurs
+    if (els.inputRestaurant) els.inputRestaurant.value = state.restaurantName;
+    if (els.inputTable) els.inputTable.value = state.tableNumber;
+    if (els.inputQty) els.inputQty.value = state.quantity;
+    if (els.selectFont) els.selectFont.value = state.font;
+
+    // 5. Fonction de mise à jour de la prévisualisation
+    function updatePreview() {
+      const template = TEMPLATES[state.template];
+      
+      // Mise à jour des classes pour le style
+      if (els.cardFront) els.cardFront.className = `card-face card-front ${template.className}`;
+      if (els.cardBack) els.cardBack.className = `card-face card-back ${template.className}`;
+
+      // Mise à jour du texte
+      if (els.cardName) els.cardName.textContent = state.restaurantName || 'Nom du Restaurant';
+      if (els.cardTableNumber) els.cardTableNumber.textContent = state.tableNumber || '00';
+
+      // Mise à jour du logo
+      if (els.cardLogo) {
+        if (state.logoData) {
+          els.cardLogo.innerHTML = `<img src="${state.logoData}" alt="Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;">`;
+        } else {
+          els.cardLogo.innerHTML = `<span class="card-logo-placeholder">${(state.restaurantName || 'R').charAt(0).toUpperCase()}</span>`;
+        }
+      }
+
+      // Mise à jour des prix
+      const unitPrice = state.basePrice + template.price;
+      const total = unitPrice * state.quantity;
+      const productLabel = PRICING[state.productType].label;
+
+      if (els.summaryBase) els.summaryBase.textContent = `${unitPrice.toFixed(2).replace('.', ',')} DT`;
+      if (els.summaryQty) els.summaryQty.textContent = `× ${state.quantity}`;
+      if (els.summaryTemplate) els.summaryTemplate.textContent = `${productLabel} · ${template.name}`;
+      if (els.summaryTotal) els.summaryTotal.textContent = `${total.toFixed(2).replace('.', ',')} DT`;
+      if (els.priceBreakdown) els.priceBreakdown.textContent = `${unitPrice.toFixed(2).replace('.', ',')} DT × ${state.quantity} ${state.productType === 'card-only' ? 'carte(s)' : 'pack(s)'}`;
+    }
+
+    // 6. Écouteurs d'événements (Inputs)
+    if (els.inputRestaurant) {
+      els.inputRestaurant.addEventListener('input', (e) => {
+        state.restaurantName = e.target.value;
+        updatePreview();
+      });
+    }
+
+    if (els.inputTable) {
+      els.inputTable.addEventListener('input', (e) => {
+        state.tableNumber = e.target.value;
+        updatePreview();
+      });
+    }
+
+    if (els.selectFont) {
+      els.selectFont.addEventListener('change', (e) => {
+        state.font = e.target.value;
+        if (els.cardName) {
+            els.cardName.style.fontFamily = state.font === 'serif' ? 'var(--font-serif)' : (state.font === 'mono' ? 'monospace' : 'var(--font-sans)');
+        }
+      });
+    }
+
+    if (els.inputQty) {
+      els.inputQty.addEventListener('input', (e) => {
+        state.quantity = parseInt(e.target.value) || 1;
+        updatePreview();
+      });
+    }
+
+    if (els.qtyMinus) {
+      els.qtyMinus.addEventListener('click', () => {
+        if (state.quantity > 1) {
+          state.quantity--;
+          if (els.inputQty) els.inputQty.value = state.quantity;
+          updatePreview();
+        }
+      });
+    }
+
+    if (els.qtyPlus) {
+      els.qtyPlus.addEventListener('click', () => {
+        state.quantity++;
+        if (els.inputQty) els.inputQty.value = state.quantity;
+        updatePreview();
+      });
+    }
+
+    // Gestion des templates (boutons)
+    document.querySelectorAll('.template-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.template-option').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.template = btn.dataset.template;
+        updatePreview();
+      });
+    });
+
+    // Gestion du Logo (Click sur la zone d'upload)
+    if (els.logoUpload && els.inputLogo) {
+      els.logoUpload.addEventListener('click', () => {
+        els.inputLogo.click();
+      });
+
+      els.inputLogo.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (file.size > 5 * 1024 * 1024) {
+          showToast('Fichier trop volumineux (max 5MB)', 'error');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          state.logoData = event.target.result;
+          state.logoName = file.name;
+          if (els.logoUploadContent) {
+            els.logoUploadContent.innerHTML = `<img src="${state.logoData}" class="logo-preview-img" alt="Logo">`;
+            els.logoUpload.classList.add('has-logo');
+          }
+          updatePreview();
+          showToast('Logo ajouté avec succès', 'success');
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Gestion de la rotation 3D (Recto/Verso)
+    document.querySelectorAll('.preview-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.preview-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const side = btn.dataset.side;
+        state.side = side;
+        if (els.card3d) {
+          els.card3d.style.transform = side === 'back' ? 'rotateY(180deg)' : 'rotateY(0deg)';
+        }
+      });
+    });
+
+    // 7. Ajouter au panier
+    if (els.btnAddToCart) {
+      els.btnAddToCart.addEventListener('click', async () => {
+        els.btnAddToCart.disabled = true;
+        els.btnAddToCart.innerHTML = '<span class="spinner"></span> Ajout...';
+
+        // 🔴 LOG FRONTEND : Ce qui est envoyé
+        console.log('📦 [FRONTEND] Envoi de productId =', `"${state.productId}"`);
+        try {
+          const template = TEMPLATES[state.template];
+          await auth.fetch('/cart/add', {
+            method: 'POST',
+            body: JSON.stringify({
+              productId: state.productId,
+              quantity: state.quantity,
+              customizationData: {
+                template: state.template,
+                templateName: template.name,
+                restaurantName: state.restaurantName,
+                tableNumber: state.tableNumber,
+                font: state.font,
+                logoData: state.logoData,
+                logoName: state.logoName
+              }
+            })
+          });
+
+          showToastWithAction(
+            'Ajouté au panier avec succès !', 
+            'Finaliser la commande →', 
+            () => window.location.href = '/checkout.html',
+            'success'
+          );
+        } catch (error) {
+          showToast(`Erreur: ${error.message}`, 'error');
+        } finally {
+          els.btnAddToCart.disabled = false;
+          els.btnAddToCart.innerHTML = '🛒 Ajouter au panier';
+        }
+      });
+    }
+
+    // 8. Sauvegarder le design
+    if (els.btnSave) {
+      els.btnSave.addEventListener('click', () => {
+        const designData = { ...state, savedAt: new Date().toISOString() };
+        localStorage.setItem('reservini_saved_design', JSON.stringify(designData));
+        showToast('✓ Design sauvegardé localement', 'success');
+      });
+    }
+
+    // Initialisation au chargement
+    updatePreview();
+  </script>
+</body>
+</html>

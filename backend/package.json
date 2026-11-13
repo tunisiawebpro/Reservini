@@ -1,0 +1,45 @@
+{
+  "name": "reservini-backend",
+  "version": "1.0.0",
+  "description": "Reservini E-commerce Backend API",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "db:push": "npx prisma db push",
+    "db:studio": "npx prisma studio",
+    "db:generate": "npx prisma generate",
+    "db:seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "@prisma/client": "5.22.0",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "express-rate-limit": "^7.4.1",
+    "express-validator": "^7.2.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^10.4.0",
+    "resend": "^6.37.0",
+    "uuid": "^10.0.0"
+  },
+  "keywords": [
+    "reservini",
+    "nfc",
+    "ecommerce"
+  ],
+  "author": "Reservini",
+  "license": "ISC",
+  "devDependencies": {
+    "prisma": "5.22.0"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  }
+}

@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Démo Lab · Reservini</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/shared/css/theme.css">
+  
+  <style>
+    .demo-page {
+      padding: 120px 0 var(--space-3xl);
+      min-height: 100vh;
+    }
+    
+    .demo-hero {
+      text-align: center;
+      margin-bottom: var(--space-3xl);
+    }
+    
+    .demo-hero h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      margin-bottom: var(--space-md);
+      font-style: italic;
+    }
+    
+    .demo-hero p {
+      color: var(--color-text-dim);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    /* ============================================
+       SIMULATION CONTAINER
+       ============================================ */
+    .demo-simulation {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3xl);
+      align-items: start;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 var(--space-xl);
+    }
+    
+    /* ============================================
+       PHONE (Client Side)
+       ============================================ */
+    .phone-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-lg);
+    }
+    
+    .phone-label {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 0.4rem 1rem;
+      background: var(--color-mauve-pale);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-mauve-dark);
+      font-weight: 500;
+    }
+    
+    .phone {
+      position: relative;
+      width: 320px;
+      height: 640px;
+      background: var(--color-mauve-dark);
+      border-radius: 45px;
+      padding: 12px;
+      box-shadow: var(--shadow-lg), 0 0 0 2px var(--color-mauve-light);
+    }
+    
+    .phone-notch {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 22px;
+      background: var(--color-mauve-dark);
+      border-radius: 12px;
+      z-index: 10;
+    }
+    
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: var(--color-bg);
+      border-radius: 35px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      color: var(--color-mauve-dark);
+      position: relative;
+    }
+    
+    /* Screen states */
+    .screen-view {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      padding: 50px 0 0;
+    }
+    
+    .screen-view.active {
+      display: flex;
+    }
+    
+    /* Header */
+    .screen-header {
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--color-border);
+      text-align: center;
+    }
+    
+    .screen-logo {
+      width: 48px;
+      height: 48px;
+      background: var(--color-mauve);
+      color: var(--color-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 0.5rem;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.3rem;
+    }
+    
+    .screen-name {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-style: italic;
+      font-weight: 600;
+    }
+    
+    .screen-tagline {
+      font-size: 0.65rem;
+      opacity: 0.6;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 0.2rem;
+    }
+    
+    /* Categories */
+    .screen-cats {
+      display: flex;
+      gap: 0.4rem;
+      padding: 0.8rem 1rem;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    .screen-cat {
+      padding: 0.35rem 0.85rem;
+      background: var(--color-mauve-pale);
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+      white-space: nowrap;
+      font-weight: 500;
+      color: var(--color-mauve-dark);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      border: none;
+    }
+    
+    .screen-cat.active {
+      background: var(--color-mauve-dark);
+      color: var(--color-bg);
+    }
+    
+    /* Menu items */
+    .screen-menu {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.5rem 0;
+    }
+    
+    .screen-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 1.2rem;
+      border-bottom: 1px dashed var(--color-border);
+      cursor: pointer;
+      transition: background var(--transition-fast);
+    }
+    
+    .screen-item:hover {
+      background: var(--color-mauve-pale);
+    }
+    
+    .screen-item-info {
+      flex: 1;
+    }
+    
+    .screen-item-name {
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.2rem;
+    }
+    
+    .screen-item-desc {
+      font-size: 0.7rem;
+      color: var(--color-text-dim);
+    }
+    
+    .screen-item-price {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      color: var(--color-mauve);
+      font-size: 0.9rem;
+      margin-right: 0.8rem;
+    }
+    
+    .screen-item-add {
+      width: 28px;
+      height: 28px;
+      background: var(--color-mauve-dark);
+      color: var(--color-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      cursor: pointer;
+      border: none;
+      transition: all var(--transition-fast);
+    }
+    
+    .screen-item-add:hover {
+      background: var(--color-mauve);
+      transform: scale(1.1);
+    }
+    
+    /* Cart bar */
+    .screen-cart-bar {
+      padding: 0.8rem 1rem;
+      background: var(--color-mauve-dark);
+      color: var(--color-bg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background var(--transition-fast);
+    }
+    
+    .screen-cart-bar:hover {
+      background: var(--color-mauve);
+    }
+    
+    .screen-cart-bar.hidden {
+      display: none;
+    }
+    
+    .screen-cart-count {
+      background: var(--color-bg);
+      color: var(--color-mauve-dark);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-right: 0.6rem;
+    }
+    
+    .screen-cart-label {
+      flex: 1;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    
+    .screen-cart-total {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    
+    /* Cart view */
+    .cart-view {
+      padding: 1rem 1.2rem;
+    }
+    
+    .cart-title {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-style: italic;
+      margin-bottom: 1rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    .cart-items {
+      flex: 1;
+      overflow-y: auto;
+    }
+    
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.7rem 0;
+      border-bottom: 1px dashed var(--color-border);
+    }
+    
+    .cart-item-name {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    
+    .cart-item-qty {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .cart-qty-btn {
+      width: 22px;
+      height: 22px;
+      background: var(--color-mauve-pale);
+      color: var(--color-mauve-dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      cursor: pointer;
+      border: none;
+    }
+    
+    .cart-item-total {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      color: var(--color-mauve);
+      font-size: 0.9rem;
+      margin-left: 0.8rem;
+    }
+    
+    .cart-summary {
+      padding: 1rem 0;
+      border-top: 1px solid var(--color-border);
+      margin-top: auto;
+    }
+    
+    .cart-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.3rem 0;
+      font-size: 0.85rem;
+    }
+    
+    .cart-row.total {
+      font-size: 1rem;
+      font-weight: 600;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--color-border);
+      margin-top: 0.5rem;
+    }
+    
+    .cart-row.total .cart-value {
+      color: var(--color-mauve);
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+    }
+    
+    .cart-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    
+    .cart-btn {
+      flex: 1;
+      padding: 0.7rem;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all var(--transition-fast);
+    }
+    
+    .cart-btn-primary {
+      background: var(--color-mauve-dark);
+      color: var(--color-bg);
+    }
+    
+    .cart-btn-primary:hover {
+      background: var(--color-mauve);
+    }
+    
+    .cart-btn-secondary {
+      background: var(--color-mauve-pale);
+      color: var(--color-mauve-dark);
+    }
+    
+    /* Confirmation view */
+    .confirm-view {
+      padding: 2rem 1.5rem;
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .confirm-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--color-mauve);
+      color: var(--color-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin: 0 auto 1.5rem;
+      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    @keyframes popIn {
+      0% { transform: scale(0); }
+      100% { transform: scale(1); }
+    }
+    
+    .confirm-title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-style: italic;
+      margin-bottom: 0.5rem;
+    }
+    
+    .confirm-order-num {
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      color: var(--color-text-dim);
+      margin-bottom: 1.5rem;
+    }
+    
+    .confirm-text {
+      font-size: 0.9rem;
+      color: var(--color-text-dim);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+    
+    /* ============================================
+       STAFF PANEL (Restaurant Side)
+       ============================================ */
+    .staff-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+    
+    .staff-label {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 0.4rem 1rem;
+      background: var(--color-mauve-pale);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-mauve-dark);
+      font-weight: 500;
+      align-self: flex-start;
+    }
+    
+    .staff-panel {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-md);
+      min-height: 600px;
+    }
+    
+    .staff-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: var(--space-md);
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: var(--space-lg);
+    }
+    
+    .staff-title {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      font-style: italic;
+    }
+    
+    .staff-status {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--color-success);
+    }
+    
+    .staff-status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--color-success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    
+    .staff-empty {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--color-text-dim);
+    }
+    
+    .staff-empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.3;
+    }
+    
+    .staff-empty-text {
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .staff-empty-hint {
+      font-size: 0.8rem;
+      opacity: 0.6;
+    }
+    
+    /* Order card */
+    .staff-order {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-md);
+      animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .staff-order.new {
+      border-color: var(--color-mauve);
+      box-shadow: 0 0 0 3px rgba(155, 126, 180, 0.15);
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .staff-order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-md);
+    }
+    
+    .staff-order-num {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-style: italic;
+      font-weight: 600;
+    }
+    
+    .staff-order-time {
+      font-size: 0.75rem;
+      color: var(--color-text-dim);
+    }
+    
+    .staff-order-table {
+      display: inline-block;
+      padding: 0.2rem 0.7rem;
+      background: var(--color-mauve-pale);
+      color: var(--color-mauve-dark);
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+      font-weight: 500;
+      margin-bottom: var(--space-md);
+    }
+    
+    .staff-order-items {
+      list-style: none;
+      padding: var(--space-md) 0;
+      border-top: 1px dashed var(--color-border);
+      border-bottom: 1px dashed var(--color-border);
+    }
+    
+    .staff-order-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.3rem 0;
+      font-size: 0.85rem;
+    }
+    
+    .staff-order-item-qty {
+      color: var(--color-mauve);
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+    
+    .staff-order-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: var(--space-md);
+    }
+    
+    .staff-order-total {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--color-mauve-dark);
+    }
+    
+    .staff-order-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .staff-action-btn {
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all var(--transition-fast);
+    }
+    
+    .staff-action-btn.accept {
+      background: var(--color-mauve-dark);
+      color: var(--color-bg);
+    }
+    
+    .staff-action-btn.accept:hover {
+      background: var(--color-mauve);
+    }
+    
+    .staff-action-btn.ready {
+      background: var(--color-success);
+      color: var(--color-bg);
+    }
+    
+    /* Order status progression */
+    .staff-order-status {
+      display: flex;
+      gap: 0.3rem;
+      margin-top: var(--space-md);
+    }
+    
+    .status-step {
+      flex: 1;
+      height: 3px;
+      background: var(--color-border);
+      border-radius: 2px;
+      transition: background var(--transition-smooth);
+    }
+    
+    .status-step.done {
+      background: var(--color-mauve);
+    }
+    
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 968px) {
+      .demo-simulation {
+        grid-template-columns: 1fr;
+      }
+      
+      .phone-wrapper, .staff-wrapper {
+        align-items: center;
+      }
+      
+      .staff-wrapper {
+        width: 100%;
+      }
+      
+      .staff-panel {
+        width: 100%;
+        max-width: 500px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="/index.html" class="nav-logo">
+        <div class="nav-logo-mark">R</div>
+        <span>Reservini</span>
+      </a>
+      
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/index.html">Accueil</a></li>
+        <li><a href="/shop.html">Boutique</a></li>
+        <li><a href="/studio.html">Studio</a></li>
+        <li><a href="/index.html#faq">FAQ</a></li>
+      </ul>
+      
+      <div class="nav-right">
+        <div id="authContainer">
+          <a href="/login.html" class="nav-cta">Connexion</a>
+        </div>
+        <button class="nav-mobile-toggle" id="mobileToggle">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- DEMO PAGE -->
+  <div class="demo-page page-transition">
+    <div class="container">
+      <div class="demo-hero">
+        <div class="section-label" style="justify-content: center;">Démo Lab</div>
+        <h1>Vivez l'expérience <em>complète</em>.</h1>
+        <p>À gauche, le téléphone du client. À droite, l'écran de la cuisine. Commandez et regardez la magie opérer.</p>
+      </div>
+    </div>
+    
+    <div class="demo-simulation">
+      <!-- PHONE (Client) -->
+      <div class="phone-wrapper">
+        <div class="phone-label">
+          <span>📱</span>
+          <span>Client · Table 08</span>
+        </div>
+        
+        <div class="phone">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            
+            <!-- MENU VIEW -->
+            <div class="screen-view active" id="menuView">
+              <div class="screen-header">
+                <div class="screen-logo">R</div>
+                <div class="screen-name">Café Lumière</div>
+                <div class="screen-tagline">Table 08 · Ouvert</div>
+              </div>
+              
+              <div class="screen-cats" id="categories"></div>
+              <div class="screen-menu" id="menuItems"></div>
+              
+              <div class="screen-cart-bar hidden" id="cartBar">
+                <div class="screen-cart-count" id="cartCount">0</div>
+                <div class="screen-cart-label">Voir le panier</div>
+                <div class="screen-cart-total" id="cartTotalBar">0,00 DT</div>
+              </div>
+            </div>
+            
+            <!-- CART VIEW -->
+            <div class="screen-view" id="cartView">
+              <div class="cart-view" style="display: flex; flex-direction: column; height: 100%;">
+                <div class="cart-title">Votre panier</div>
+                <div class="cart-items" id="cartItems"></div>
+                <div class="cart-summary">
+                  <div class="cart-row">
+                    <span>Sous-total</span>
+                    <span id="subtotal">0,00 DT</span>
+                  </div>
+                  <div class="cart-row total">
+                    <span>Total</span>
+                    <span class="cart-value" id="total">0,00 DT</span>
+                  </div>
+                </div>
+                <div class="cart-actions">
+                  <button class="cart-btn cart-btn-secondary" id="backToMenu">← Menu</button>
+                  <button class="cart-btn cart-btn-primary" id="placeOrder">Commander →</button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- CONFIRMATION VIEW -->
+            <div class="screen-view" id="confirmView">
+              <div class="confirm-view">
+                <div class="confirm-icon">✓</div>
+                <div class="confirm-title">Commande envoyée !</div>
+                <div class="confirm-order-num" id="confirmOrderNum">N° DEMO-001</div>
+                <div class="confirm-text">
+                  Votre commande a été transmise à la cuisine.<br>
+                  Temps d'attente estimé : <strong>8-12 min</strong>
+                </div>
+                <button class="cart-btn cart-btn-primary" id="newOrder" style="width: 100%;">Nouvelle commande</button>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+      
+      <!-- STAFF PANEL -->
+      <div class="staff-wrapper">
+        <div class="staff-label">
+          <span>👨‍🍳</span>
+          <span>Cuisine · Temps réel</span>
+        </div>
+        
+        <div class="staff-panel">
+          <div class="staff-header">
+            <div class="staff-title">Commandes en cours</div>
+            <div class="staff-status">
+              <span class="staff-status-dot"></span>
+              <span>En ligne</span>
+            </div>
+          </div>
+          
+          <div id="staffOrders">
+            <div class="staff-empty">
+              <div class="staff-empty-icon">◈</div>
+              <div class="staff-empty-text">Aucune commande pour l'instant</div>
+              <div class="staff-empty-hint">Passez une commande depuis le téléphone →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>© 2026 Reservini. Démo interactive.</div>
+        <div style="display: flex; gap: var(--space-lg);">
+          <a href="/index.html">Accueil</a>
+          <a href="/shop.html">Boutique</a>
+          <a href="/studio.html">Studio</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { initApp } from '/shared/js/app.js';
+    initApp();
+    
+    // ============================================
+    // MENU DATA
+    // ============================================
+    const menuData = {
+      'Cafés': [
+        { id: 1, name: 'Espresso', desc: 'Ristretto italien', price: 3.5 },
+        { id: 2, name: 'Cappuccino', desc: 'Mousse onctueuse', price: 5.0 },
+        { id: 3, name: 'Latte glacé', desc: 'Café lait glacé', price: 6.0 },
+        { id: 4, name: 'Café noisette', desc: 'Espresso + noisette', price: 4.5 }
+      ],
+      'Viennoiseries': [
+        { id: 5, name: 'Croissant', desc: 'Beurre AOP', price: 4.0 },
+        { id: 6, name: 'Pain au chocolat', desc: '2 barres cacao', price: 4.5 },
+        { id: 7, name: 'Chausson aux pommes', desc: 'Pommes caramélisées', price: 5.0 }
+      ],
+      'Jus frais': [
+        { id: 8, name: 'Orange pressée', desc: 'Oranges de Testour', price: 5.5 },
+        { id: 9, name: 'Citronnade', desc: 'Menthe fraîche', price: 5.0 },
+        { id: 10, name: 'Smoothie fruits rouges', desc: 'Fraises, framboises', price: 7.5 }
+      ],
+      'Brunch': [
+        { id: 11, name: 'Avocado toast', desc: 'Pain complet, avocat', price: 9.0 },
+        { id: 12, name: 'Oeufs bénédicte', desc: 'Sauce hollandaise', price: 11.0 },
+        { id: 13, name: 'Pancakes', desc: 'Sirop érable, fruits', price: 10.0 }
+      ]
+    };
+    
+    // ============================================
+    // STATE
+    // ============================================
+    let currentCategory = 'Cafés';
+    let cart = [];
+    let orderCounter = 1;
+    let staffOrders = [];
+    
+    // ============================================
+    // RENDER CATEGORIES
+    // ============================================
+    function renderCategories() {
+      const container = document.getElementById('categories');
+      container.innerHTML = Object.keys(menuData).map(cat => `
+        <button class="screen-cat ${cat === currentCategory ? 'active' : ''}" data-cat="${cat}">
+          ${cat}
+        </button>
+      `).join('');
+      
+      container.querySelectorAll('.screen-cat').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentCategory = btn.dataset.cat;
+          renderCategories();
+          renderMenu();
+        });
+      });
+    }
+    
+    // ============================================
+    // RENDER MENU
+    // ============================================
+    function renderMenu() {
+      const container = document.getElementById('menuItems');
+      const items = menuData[currentCategory];
+      
+      container.innerHTML = items.map(item => `
+        <div class="screen-item" data-id="${item.id}">
+          <div class="screen-item-info">
+            <div class="screen-item-name">${item.name}</div>
+            <div class="screen-item-desc">${item.desc}</div>
+          </div>
+          <div class="screen-item-price">${item.price.toFixed(2).replace('.', ',')} DT</div>
+          <button class="screen-item-add" data-id="${item.id}">+</button>
+        </div>
+      `).join('');
+      
+      container.querySelectorAll('.screen-item-add').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          addToCart(parseInt(btn.dataset.id));
+        });
+      });
+    }
+    
+    // ============================================
+    // CART LOGIC
+    // ============================================
+    function addToCart(itemId) {
+      const allItems = Object.values(menuData).flat();
+      const item = allItems.find(i => i.id === itemId);
+      if (!item) return;
+      
+      const existing = cart.find(c => c.id === itemId);
+      if (existing) {
+        existing.qty++;
+      } else {
+        cart.push({ ...item, qty: 1 });
+      }
+      
+      updateCartBar();
+      
+      // Animation feedback
+      const btn = document.querySelector(`.screen-item-add[data-id="${itemId}"]`);
+      btn.style.transform = 'scale(1.3)';
+      btn.style.background = 'var(--color-mauve)';
+      setTimeout(() => {
+        btn.style.transform = '';
+        btn.style.background = '';
+      }, 200);
+    }
+    
+    function updateCartBar() {
+      const cartBar = document.getElementById('cartBar');
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      
+      if (count > 0) {
+        cartBar.classList.remove('hidden');
+        document.getElementById('cartCount').textContent = count;
+        document.getElementById('cartTotalBar').textContent = total.toFixed(2).replace('.', ',') + ' DT';
+      } else {
+        cartBar.classList.add('hidden');
+      }
+    }
+    
+    function renderCart() {
+      const container = document.getElementById('cartItems');
+      
+      if (cart.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--color-text-dim);">Panier vide</div>';
+      } else {
+        container.innerHTML = cart.map(item => `
+          <div class="cart-item">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-qty">
+              <button class="cart-qty-btn" data-action="minus" data-id="${item.id}">−</button>
+              <span>${item.qty}</span>
+              <button class="cart-qty-btn" data-action="plus" data-id="${item.id}">+</button>
+            </div>
+            <div class="cart-item-total">${(item.price * item.qty).toFixed(2).replace('.', ',')} DT</div>
+          </div>
+        `).join('');
+        
+        container.querySelectorAll('.cart-qty-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = parseInt(btn.dataset.id);
+            const action = btn.dataset.action;
+            const item = cart.find(c => c.id === id);
+            
+            if (action === 'plus') {
+              item.qty++;
+            } else {
+              item.qty--;
+              if (item.qty <= 0) {
+                cart = cart.filter(c => c.id !== id);
+              }
+            }
+            
+            renderCart();
+            updateCartBar();
+          });
+        });
+      }
+      
+      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      document.getElementById('subtotal').textContent = total.toFixed(2).replace('.', ',') + ' DT';
+      document.getElementById('total').textContent = total.toFixed(2).replace('.', ',') + ' DT';
+    }
+    
+    // ============================================
+    // VIEW SWITCHING
+    // ============================================
+    function showView(viewId) {
+      document.querySelectorAll('.screen-view').forEach(v => v.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+    }
+    
+    document.getElementById('cartBar').addEventListener('click', () => {
+      renderCart();
+      showView('cartView');
+    });
+    
+    document.getElementById('backToMenu').addEventListener('click', () => {
+      showView('menuView');
+    });
+    
+    document.getElementById('placeOrder').addEventListener('click', () => {
+      if (cart.length === 0) return;
+      
+      const orderNum = `DEMO-${String(orderCounter).padStart(3, '0')}`;
+      orderCounter++;
+      
+      const order = {
+        num: orderNum,
+        table: '08',
+        items: [...cart],
+        total: cart.reduce((sum, item) => sum + (item.price * item.qty), 0),
+        time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        status: 'new' // new → accepted → preparing → ready
+      };
+      
+      // Add to staff panel
+      addStaffOrder(order);
+      
+      // Show confirmation
+      document.getElementById('confirmOrderNum').textContent = `N° ${orderNum}`;
+      showView('confirmView');
+      
+      // Reset cart
+      cart = [];
+      updateCartBar();
+    });
+    
+    document.getElementById('newOrder').addEventListener('click', () => {
+      showView('menuView');
+    });
+    
+    // ============================================
+    // STAFF PANEL
+    // ============================================
+    function addStaffOrder(order) {
+      staffOrders.unshift(order);
+      renderStaffOrders();
+      
+      // Sound notification (visual pulse)
+      const panel = document.querySelector('.staff-panel');
+      panel.style.boxShadow = '0 0 0 4px var(--color-mauve), var(--shadow-md)';
+      setTimeout(() => {
+        panel.style.boxShadow = 'var(--shadow-md)';
+      }, 1000);
+    }
+    
+    function renderStaffOrders() {
+      const container = document.getElementById('staffOrders');
+      
+      if (staffOrders.length === 0) {
+        container.innerHTML = `
+          <div class="staff-empty">
+            <div class="staff-empty-icon">◈</div>
+            <div class="staff-empty-text">Aucune commande pour l'instant</div>
+            <div class="staff-empty-hint">Passez une commande depuis le téléphone →</div>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = staffOrders.map((order, idx) => {
+        const statusSteps = ['new', 'accepted', 'preparing', 'ready'];
+        const currentStepIdx = statusSteps.indexOf(order.status);
+        
+        return `
+          <div class="staff-order ${order.status === 'new' ? 'new' : ''}">
+            <div class="staff-order-header">
+              <div class="staff-order-num">${order.num}</div>
+              <div class="staff-order-time">${order.time}</div>
+            </div>
+            <div class="staff-order-table">Table ${order.table}</div>
+            <ul class="staff-order-items">
+              ${order.items.map(item => `
+                <li class="staff-order-item">
+                  <span><span class="staff-order-item-qty">${item.qty}×</span>${item.name}</span>
+                  <span>${(item.price * item.qty).toFixed(2).replace('.', ',')} DT</span>
+                </li>
+              `).join('')}
+            </ul>
+            <div class="staff-order-footer">
+              <div class="staff-order-total">${order.total.toFixed(2).replace('.', ',')} DT</div>
+              <div class="staff-order-actions">
+                ${order.status === 'new' ? `
+                  <button class="staff-action-btn accept" data-idx="${idx}" data-action="accept">Accepter</button>
+                ` : ''}
+                ${order.status === 'accepted' ? `
+                  <button class="staff-action-btn accept" data-idx="${idx}" data-action="prepare">En préparation</button>
+                ` : ''}
+                ${order.status === 'preparing' ? `
+                  <button class="staff-action-btn ready" data-idx="${idx}" data-action="ready">Prêt ✓</button>
+                ` : ''}
+                ${order.status === 'ready' ? `
+                  <span style="color: var(--color-success); font-size: 0.85rem; font-weight: 500;">✓ Servi</span>
+                ` : ''}
+              </div>
+            </div>
+            <div class="staff-order-status">
+              ${statusSteps.map((step, i) => `
+                <div class="status-step ${i <= currentStepIdx ? 'done' : ''}"></div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      // Attach action buttons
+      container.querySelectorAll('.staff-action-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = parseInt(btn.dataset.idx);
+          const action = btn.dataset.action;
+          
+          if (action === 'accept') staffOrders[idx].status = 'accepted';
+          if (action === 'prepare') staffOrders[idx].status = 'preparing';
+          if (action === 'ready') staffOrders[idx].status = 'ready';
+          
+          renderStaffOrders();
+        });
+      });
+    }
+    
+    // ============================================
+    // INIT
+    // ============================================
+    renderCategories();
+    renderMenu();
+  </script>
+</body>
+</html>

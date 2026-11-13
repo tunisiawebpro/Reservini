@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finaliser la commande · Reservini</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/shared/css/theme.css">
+  
+  <style>
+    .checkout-page { padding: 120px 0 var(--space-3xl); min-height: 100vh; }
+    
+    .checkout-header { text-align: center; margin-bottom: var(--space-2xl); }
+    .checkout-header h1 { font-size: clamp(2rem, 4vw, 3rem); font-style: italic; margin-bottom: var(--space-sm); }
+    .checkout-header p { color: var(--color-text-dim); font-size: 1.05rem; }
+    
+    /* Progress Steps */
+    .progress-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-2xl);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-size: 0.85rem;
+      color: var(--color-text-dim);
+      transition: all var(--transition-fast);
+    }
+    
+    .step-indicator.active { color: var(--color-mauve-dark); font-weight: 600; }
+    .step-indicator.done { color: var(--color-success); }
+    
+    .step-num {
+      width: 32px; height: 32px;
+      background: var(--color-bg);
+      border: 2px solid var(--color-border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 600;
+      transition: all var(--transition-fast);
+    }
+    
+    .step-indicator.active .step-num { background: var(--color-mauve-dark); color: var(--color-bg); border-color: var(--color-mauve-dark); }
+    .step-indicator.done .step-num { background: var(--color-success); color: var(--color-bg); border-color: var(--color-success); }
+    
+    .step-line { width: 40px; height: 2px; background: var(--color-border); }
+    .step-line.done { background: var(--color-success); }
+    
+    /* Layout */
+    .checkout-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: var(--space-2xl);
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 var(--space-xl);
+    }
+    
+    /* Main Form Area */
+    .checkout-main {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-2xl);
+    }
+    
+    .checkout-step { display: none; animation: fadeIn 0.4s ease; }
+    .checkout-step.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .step-title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-style: italic;
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-md);
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    /* Cart Items in Checkout */
+    .checkout-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-md) 0;
+      border-bottom: 1px dashed var(--color-border);
+    }
+    
+    .checkout-item:last-child { border-bottom: none; }
+    
+    .item-info { display: flex; align-items: center; gap: var(--space-md); }
+    .item-thumb {
+      width: 60px; height: 80px;
+      background: var(--color-mauve-pale);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-serif); font-style: italic; color: var(--color-mauve-dark);
+    }
+    .item-name { font-weight: 500; margin-bottom: 0.2rem; }
+    .item-meta { font-size: 0.8rem; color: var(--color-text-dim); }
+    .item-price { font-family: var(--font-serif); font-weight: 600; font-size: 1.1rem; }
+    
+    /* Form Styles */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); margin-bottom: var(--space-md); }
+    .form-group { margin-bottom: var(--space-md); }
+    .form-group label { display: block; font-size: 0.8rem; color: var(--color-text-dim); margin-bottom: var(--space-xs); font-weight: 500; }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; padding: 0.85rem 1rem;
+      background: var(--color-bg); border: 1px solid var(--color-border);
+      color: var(--color-text); border-radius: var(--radius-md);
+      font-size: 0.95rem; transition: all var(--transition-fast);
+    }
+    .form-group input:focus, .form-group textarea:focus {
+      outline: none; border-color: var(--color-mauve);
+      box-shadow: 0 0 0 3px rgba(155, 126, 180, 0.1);
+    }
+    
+    /* Payment Options */
+    .payment-option {
+      display: flex; align-items: center; gap: var(--space-md);
+      padding: var(--space-md);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      margin-bottom: var(--space-sm);
+    }
+    .payment-option:hover { border-color: var(--color-mauve-light); }
+    .payment-option.selected { border-color: var(--color-mauve); background: var(--color-mauve-pale); }
+    .payment-option input { display: none; }
+    .payment-icon { font-size: 1.5rem; }
+    .payment-info strong { display: block; font-size: 0.95rem; }
+    .payment-info span { font-size: 0.8rem; color: var(--color-text-dim); }
+    
+    /* Buttons */
+    .btn-row { display: flex; justify-content: space-between; margin-top: var(--space-xl); }
+    .btn-back { background: transparent; color: var(--color-text-dim); border: 1px solid var(--color-border); }
+    .btn-back:hover { color: var(--color-text); border-color: var(--color-text-dim); }
+    .btn-next { background: var(--color-mauve-dark); color: var(--color-bg); }
+    .btn-next:hover { background: var(--color-mauve); }
+    .btn-next:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    /* Summary Sidebar */
+    .checkout-summary {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+    }
+    
+    .summary-title {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      font-style: italic;
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-md);
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: var(--space-sm); font-size: 0.95rem; }
+    .summary-row.total {
+      margin-top: var(--space-md); padding-top: var(--space-md);
+      border-top: 2px solid var(--color-border);
+      font-size: 1.2rem; font-weight: 600;
+    }
+    .summary-row.total .val { color: var(--color-mauve-dark); font-family: var(--font-serif); font-size: 1.4rem; }
+    
+    /* Success State */
+    .success-state { text-align: center; padding: 3rem 1rem; }
+    .success-icon {
+      width: 80px; height: 80px; margin: 0 auto var(--space-lg);
+      background: var(--color-success); color: var(--color-bg);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+    .success-state h2 { font-family: var(--font-serif); font-size: 2rem; font-style: italic; margin-bottom: var(--space-sm); }
+    .order-number { font-size: 0.85rem; letter-spacing: 2px; color: var(--color-text-dim); margin-bottom: var(--space-xl); }
+    
+    .empty-cart { text-align: center; padding: 3rem 1rem; color: var(--color-text-dim); }
+    
+    @media (max-width: 968px) {
+      .checkout-layout { grid-template-columns: 1fr; }
+      .checkout-summary { position: static; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="/index.html" class="nav-logo"><div class="nav-logo-mark">R</div><span>Reservini</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/index.html">Accueil</a></li>
+        <li><a href="/shop.html">Boutique</a></li>
+        <li><a href="/studio.html">Studio</a></li>
+        <li><a href="/account.html">Compte</a></li>
+      </ul>
+      <div class="nav-right">
+        <div id="authContainer"><a href="/login.html" class="nav-cta">Connexion</a></div>
+        <button class="nav-mobile-toggle" id="mobileToggle"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CHECKOUT PAGE -->
+  <div class="checkout-page page-transition">
+    <div class="container">
+      <div class="checkout-header">
+        <div class="section-label" style="justify-content: center;">Paiement</div>
+        <h1>Finalisez votre <em>commande</em>.</h1>
+        <p>Vérifiez votre panier et vos informations de livraison.</p>
+      </div>
+      
+      <!-- Progress Bar -->
+      <div class="progress-bar" id="progressBar">
+        <div class="step-indicator active" data-step="1">
+          <div class="step-num">1</div>
+          <span>Panier</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-indicator" data-step="2">
+          <div class="step-num">2</div>
+          <span>Livraison</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-indicator" data-step="3">
+          <div class="step-num">3</div>
+          <span>Paiement</span>
+        </div>
+      </div>
+      
+      <div class="checkout-layout">
+        <!-- Left: Steps -->
+        <div class="checkout-main">
+          
+          <!-- STEP 1: Cart Review -->
+          <div class="checkout-step active" id="step1">
+            <h2 class="step-title">Votre panier</h2>
+            <div id="cartItemsContainer">
+              <div class="empty-cart">
+                <div class="spinner-large" style="width: 30px; height: 30px; border: 2px solid var(--color-border); border-top-color: var(--color-mauve); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
+                <p>Chargement du panier...</p>
+              </div>
+            </div>
+            <div class="btn-row">
+              <a href="/studio.html" class="btn btn-back">← Continuer le design</a>
+              <button class="btn btn-next" id="btnToStep2" disabled>Continuer vers la livraison →</button>
+            </div>
+          </div>
+          
+          <!-- STEP 2: Shipping -->
+          <div class="checkout-step" id="step2">
+            <h2 class="step-title">Informations de livraison</h2>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nom complet *</label>
+                <input type="text" id="shipName" required>
+              </div>
+              <div class="form-group">
+  <label for="phone">Numéro de téléphone *</label>
+  <input type="tel" id="phone" placeholder="+216 XX XXX XXX" required>
+</div>
+            </div>
+            <div class="form-group">
+              <label>Adresse complète *</label>
+              <input type="text" id="shipAddress" required placeholder="N° et rue">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Ville *</label>
+                <input type="text" id="shipCity" required>
+              </div>
+              <div class="form-group">
+                <label>Code postal</label>
+                <input type="text" id="shipZip" placeholder="2000">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Notes de personnalisation (Optionnel)</label>
+              <textarea id="shipNotes" rows="3" placeholder="Ex: Appeler avant de livrer, couleurs spécifiques..."></textarea>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-back" onclick="goToStep(1)">← Retour au panier</button>
+              <button class="btn btn-next" id="btnToStep3">Continuer vers le paiement →</button>
+            </div>
+          </div>
+          
+          <!-- STEP 3: Payment -->
+          <div class="checkout-step" id="step3">
+            <h2 class="step-title">Mode de paiement</h2>
+            
+            <label class="payment-option selected">
+              <input type="radio" name="payment" value="COD" checked>
+              <div class="payment-icon">💵</div>
+              <div class="payment-info">
+                <strong>Paiement à la livraison</strong>
+                <span>Payez en espèces lorsque vous recevez votre commande.</span>
+              </div>
+            </label>
+            
+            <label class="payment-option" style="opacity: 0.5; cursor: not-allowed;">
+              <input type="radio" name="payment" value="CARD" disabled>
+              <div class="payment-icon">💳</div>
+              <div class="payment-info">
+                <strong>Carte bancaire (Bientôt)</strong>
+                <span>Paiement sécurisé par carte.</span>
+              </div>
+            </label>
+            
+            <div class="btn-row">
+              <button class="btn btn-back" onclick="goToStep(2)">← Retour à la livraison</button>
+              <button class="btn btn-next" id="btnPlaceOrder">✓ Confirmer la commande</button>
+            </div>
+          </div>
+          
+          <!-- SUCCESS STATE -->
+          <div class="checkout-step" id="stepSuccess">
+            <div class="success-state">
+              <div class="success-icon">✓</div>
+              <h2>Commande confirmée !</h2>
+              <div class="order-number" id="successOrderNum">N° RES-00000000</div>
+              <p style="color: var(--color-text-dim); margin-bottom: 2rem; line-height: 1.7;">
+                Merci pour votre confiance. Votre commande a été reçue et sera préparée avec soin.<br>
+                Vous recevrez un appel de confirmation sous 24h.
+              </p>
+              <div style="display: flex; gap: 1rem; justify-content: center;">
+                <a href="/account.html" class="btn btn-primary">Voir mes commandes</a>
+                <a href="/studio.html" class="btn btn-back">Créer une autre carte</a>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+        
+        <!-- Right: Summary -->
+        <div class="checkout-summary">
+          <h3 class="summary-title">Récapitulatif</h3>
+          <div id="summaryItems">
+            <!-- Items injected here -->
+          </div>
+          <div style="margin-top: var(--space-lg); padding-top: var(--space-md); border-top: 1px solid var(--color-border);">
+            <div class="summary-row">
+              <span>Sous-total</span>
+              <span id="summarySubtotal">0,00 DT</span>
+            </div>
+            <div class="summary-row">
+              <span>Livraison</span>
+              <span id="summaryShipping">10,00 DT</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total</span>
+              <span class="val" id="summaryTotal">10,00 DT</span>
+            </div>
+          </div>
+          <p style="font-size: 0.75rem; color: var(--color-text-dim); margin-top: var(--space-md); text-align: center;">
+            🔒 Paiement sécurisé · Livraison en 5-7 jours
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>© 2026 Reservini. Tous droits réservés.</div>
+        <div style="display: flex; gap: var(--space-lg);">
+          <a href="/index.html">Accueil</a>
+          <a href="/shop.html">Boutique</a>
+          <a href="/studio.html">Studio</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { initApp, auth } from '/shared/js/app.js';
+    import { showToast } from '/shared/js/toast.js';
+    
+    // 1. Auth Check
+    const user = await auth.checkStatus();
+    if (!user) {
+      localStorage.setItem('redirect_after_login', '/checkout.html');
+      window.location.href = '/login.html';
+    } else {
+      initApp();
+    }
+    
+    // 2. State
+    let cartData = null;
+    let currentStep = 1;
+    
+    // 3. Load Cart
+    async function loadCart() {
+      try {
+        const data = await auth.fetch('/cart');
+        cartData = data.cart;
+        
+        const container = document.getElementById('cartItemsContainer');
+        const summaryContainer = document.getElementById('summaryItems');
+        
+        if (!cartData.items || cartData.items.length === 0) {
+          container.innerHTML = `
+            <div class="empty-cart">
+              <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">🛒</div>
+              <p>Votre panier est vide.</p>
+              <a href="/studio.html" class="btn btn-primary" style="margin-top: 1rem; display: inline-block;">Créer ma carte</a>
+            </div>
+          `;
+          summaryContainer.innerHTML = '<p style="color: var(--color-text-dim); font-size: 0.9rem;">Aucun article</p>';
+          return;
+        }
+        
+        let subtotal = 0;
+        
+        // Render cart items in Step 1
+        const templateStyles = {
+            noir: 'background: linear-gradient(135deg, #2a1f33 0%, #1a1222 100%); color: #e8dff0;',
+            ivory: 'background: linear-gradient(135deg, #f5f0e1 0%, #e8dfc5 100%); color: #5d4b6b;',
+            acid: 'background: linear-gradient(135deg, #c9b8d9 0%, #9b7eb4 100%); color: #2a1f33;',
+            ember: 'background: linear-gradient(135deg, #8b6f47 0%, #5d4b2e 100%); color: #f5f0e1;'
+        };
+
+        container.innerHTML = cartData.items.map(item => {
+          const price = parseFloat(item.product.basePrice);
+          const total = price * item.quantity;
+          subtotal += total;
+          
+          const custom = item.customizationData || {};
+          const style = templateStyles[custom.template] || templateStyles.noir;
+          const meta = `${custom.templateName || 'Standard'} · Table ${custom.tableNumber || '-'}`;
+          
+          // On affiche le logo s'il existe, sinon la 1ère lettre du nom
+          const logoHtml = custom.logoData 
+            ? `<img src="${custom.logoData}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">` 
+            : `<span style="font-family: var(--font-serif); font-style: italic; font-size: 1.2rem;">${(custom.restaurantName || 'R').charAt(0)}</span>`;
+
+          return `
+            <div class="checkout-item">
+              <div class="item-info">
+                <div class="item-thumb" style="${style}">
+                  ${logoHtml}
+                </div>
+                <div>
+                  <div class="item-name">${custom.restaurantName || item.product.name}</div>
+                  <div class="item-meta">${meta} · Qté: ${item.quantity}</div>
+                </div>
+              </div>
+              <div class="item-price">${total.toFixed(2)} DT</div>
+            </div>
+          `;
+        }).join('');
+        
+        // Render summary items
+        summaryContainer.innerHTML = cartData.items.map(item => {
+          const price = parseFloat(item.product.basePrice);
+          const total = price * item.quantity;
+          const custom = item.customizationData || {}; // <--- Hethi l ligne li kant na9sa!
+          
+          return `
+            <div class="summary-row" style="font-size: 0.85rem;">
+              <span>${item.quantity}× ${custom.restaurantName || item.product.name}</span>
+              <span>${total.toFixed(2)} DT</span>
+            </div>
+          `;
+        }).join('');
+        
+        // Calculate totals
+        const shipping = subtotal > 200 ? 0 : 10;
+        const total = subtotal + shipping;
+        
+        document.getElementById('summarySubtotal').textContent = `${subtotal.toFixed(2)} DT`;
+        document.getElementById('summaryShipping').textContent = shipping === 0 ? 'Gratuite' : `${shipping.toFixed(2)} DT`;
+        document.getElementById('summaryTotal').textContent = `${total.toFixed(2)} DT`;
+        
+        document.getElementById('btnToStep2').disabled = false;
+        
+      } catch (error) {
+        console.error('Erreur chargement panier:', error);
+        document.getElementById('cartItemsContainer').innerHTML = `<div class="empty-cart"><p>Erreur de chargement.</p></div>`;
+      }
+    }
+    
+    // 4. Step Navigation
+    window.goToStep = function(step) {
+      document.querySelectorAll('.checkout-step').forEach(s => s.classList.remove('active'));
+      document.getElementById(`step${step}`).classList.add('active');
+      
+      document.querySelectorAll('.step-indicator').forEach((ind, idx) => {
+        ind.classList.remove('active', 'done');
+        if (idx + 1 < step) ind.classList.add('done');
+        if (idx + 1 === step) ind.classList.add('active');
+      });
+      
+      document.querySelectorAll('.step-line').forEach((line, idx) => {
+        line.classList.toggle('done', idx + 1 < step);
+      });
+      
+      currentStep = step;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    
+    document.getElementById('btnToStep2').addEventListener('click', () => {
+      // Pre-fill name if available
+      if (user.profile?.businessName) document.getElementById('shipName').value = user.profile.businessName;
+      goToStep(2);
+    });
+    
+    document.getElementById('btnToStep3').addEventListener('click', () => {
+      const name = document.getElementById('shipName').value.trim();
+      const phone = document.getElementById('shipPhone').value.trim();
+      const address = document.getElementById('shipAddress').value.trim();
+      const city = document.getElementById('shipCity').value.trim();
+      
+      if (!name || !phone || !address || !city) {
+        showToast('Veuillez remplir tous les champs obligatoires (*)', 'warning');
+        return;
+      }
+      goToStep(3);
+    });
+    
+    // 5. Place Order
+    document.getElementById('btnPlaceOrder').addEventListener('click', async () => {
+      const btn = document.getElementById('btnPlaceOrder');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner" style="width: 16px; height: 16px; border: 2px solid transparent; border-top-color: currentColor; border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; margin-right: 0.5rem;"></span> Traitement...';
+      
+      try {
+        const address = document.getElementById('shipAddress').value.trim();
+        const city = document.getElementById('shipCity').value.trim();
+        const notes = document.getElementById('shipNotes').value.trim();
+        
+        const orderData = await auth.fetch('/orders/checkout', {
+          method: 'POST',
+          body: JSON.stringify({
+            shippingAddress: `${address}, ${city}`,
+            paymentMethod: 'COD',
+            customizationNotes: notes
+          })
+        });
+        
+        // Show success
+        document.getElementById('successOrderNum').textContent = `N° ${orderData.order.orderNumber}`;
+        document.querySelectorAll('.checkout-step').forEach(s => s.classList.remove('active'));
+        document.getElementById('stepSuccess').classList.add('active');
+        document.getElementById('progressBar').style.display = 'none';
+        
+      } catch (error) {
+        console.error('Erreur commande:', error);
+        showToast(`Erreur: ${error.message}`, 'error');
+        btn.disabled = false;
+        btn.innerHTML = '✓ Confirmer la commande';
+      }
+    });
+
+    const checkoutForm = document.getElementById('checkoutForm');
+
+if (checkoutForm) {
+  checkoutForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // 1. Récupérer la valeur ET afficher ce qu'on a trouvé
+    const phoneInput = document.getElementById('phone');
+    const phone = phoneInput ? phoneInput.value.trim() : '';
+    
+    console.log("📱 DEBUG FRONTEND - Valeur du champ phone :", phone);
+    console.log("📱 DEBUG FRONTEND - Élément trouvé ?", !!phoneInput);
+
+    if (!phone) {
+      alert('Veuillez entrer votre numéro de téléphone'); // Utilise alert pour être sûr que ça bloque
+      return;
+    }
+
+    const address = document.getElementById('address')?.value.trim() || '';
+    const notes = document.getElementById('notes')?.value.trim() || '';
+
+    const btn = checkoutForm.querySelector('button[type="submit"]');
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Traitement...';
+
+    try {
+      // 2. Préparer le corps de la requête
+      const payload = {
+        shippingAddress: address,
+        phone: phone,               // ✅ On s'assure qu'il est bien là
+        customizationNotes: notes,
+        paymentMethod: 'COD'
+      };
+      
+      console.log("📦 DEBUG FRONTEND - Payload envoyé au backend :", payload);
+
+      // 3. Envoyer la requête
+      const res = await fetch('http://127.0.0.1:5000/api/v1/checkout', { // Adapte l'URL si c'est /orders
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}` // Adapte si ton token a un autre nom
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Échec de la commande');
+
+      alert('✓ Commande passée avec succès !');
+      setTimeout(() => { window.location.href = '/index.html'; }, 1500);
+
+    } catch (error) {
+      alert('Erreur: ' + error.message);
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+    }
+  });
+}
+    
+    // Init
+    loadCart();
+  </script>
+</body>
+</html>
