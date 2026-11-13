@@ -71,11 +71,12 @@ async function main() {
       throw new Error('Set both ADMIN_EMAIL and ADMIN_PASSWORD to seed an admin account.');
     }
 
+    const passwordHash = await bcrypt.hash(adminPassword, 12);
     const existingAdmin = await prisma.user.findUnique({ where: { email: adminEmail } });
     if (existingAdmin) {
       await prisma.user.update({
         where: { id: existingAdmin.id },
-        data: { role: 'ADMIN' }
+        data: { role: 'ADMIN', passwordHash }
       });
     } else {
       const username = process.env.ADMIN_USERNAME?.trim() || adminEmail.split('@')[0];
@@ -83,7 +84,7 @@ async function main() {
         data: {
           email: adminEmail,
           username,
-          passwordHash: await bcrypt.hash(adminPassword, 12),
+          passwordHash,
           role: 'ADMIN',
           profile: { create: { businessName: 'Reservini Admin' } }
         }
