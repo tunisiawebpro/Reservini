@@ -180,6 +180,49 @@
     .template-ivory { background: linear-gradient(135deg, #f5f0e1 0%, #e8dfc5 100%); color: #5d4b6b; }
     .template-acid { background: linear-gradient(135deg, #c9b8d9 0%, #9b7eb4 100%); color: #2a1f33; }
     .template-ember { background: linear-gradient(135deg, #8b6f47 0%, #5d4b2e 100%); color: #f5f0e1; }
+
+    .orientation-options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-sm);
+    }
+
+    .orientation-option {
+      padding: 0.75rem;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      color: var(--color-text-dim);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .orientation-option.active {
+      border-color: var(--color-mauve);
+      background: var(--color-mauve-pale);
+      color: var(--color-mauve-dark);
+      box-shadow: 0 0 0 2px rgba(155, 126, 180, 0.1);
+    }
+
+    .orientation-icon {
+      display: block;
+      width: 34px;
+      height: 22px;
+      margin: 0 auto 0.4rem;
+      border: 2px solid currentColor;
+      border-radius: 4px;
+    }
+
+    .orientation-option[data-orientation="portrait"] .orientation-icon {
+      width: 22px;
+      height: 34px;
+    }
+
+    .orientation-option span:last-child {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
     
     .template-name {
       font-family: var(--font-serif);
@@ -344,6 +387,12 @@
       position: relative;
       z-index: 5;
     }
+
+    .card-scene.landscape {
+      width: min(480px, 100%);
+      height: auto;
+      aspect-ratio: 8 / 5;
+    }
     
     .card-3d {
       width: 100%;
@@ -450,6 +499,20 @@
     }
     
     .card-logo img { width: 100%; height: 100%; object-fit: contain; }
+
+    .card-logo.brand-name {
+      width: auto;
+      min-width: 70px;
+      max-width: 100%;
+      height: auto;
+      min-height: 48px;
+      padding: 0.65rem 1rem;
+      border-radius: var(--radius-md);
+      font-family: var(--font-serif);
+      font-size: clamp(0.7rem, 2vw, 1rem);
+      font-style: italic;
+      text-align: center;
+    }
     
     .card-logo-placeholder {
       font-size: 0.6rem;
@@ -467,6 +530,85 @@
       line-height: 1.2;
       padding: 0 1rem;
       font-style: italic;
+    }
+
+    .card-name[hidden] { display: none; }
+
+    .card-front-content.layout-editorial {
+      align-items: flex-start;
+    }
+
+    .layout-editorial .card-logo,
+    .layout-editorial .card-name,
+    .layout-editorial .card-table,
+    .layout-editorial .tap-instruction {
+      text-align: left;
+      align-self: flex-start;
+    }
+
+    .card-scene.landscape .card-front-content {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr) auto auto;
+      align-items: center;
+      justify-items: center;
+      gap: 0.15rem 0.75rem;
+      padding: 1rem;
+    }
+
+    .card-scene.landscape .card-logo {
+      grid-column: 1;
+      grid-row: 1;
+      width: 52px;
+      height: 52px;
+      margin: 1.25rem 0 0;
+    }
+
+    .card-scene.landscape .card-logo.brand-name {
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      min-height: 40px;
+      font-size: 0.75rem;
+    }
+
+    .card-scene.landscape .card-name {
+      grid-column: 1;
+      grid-row: 2;
+      margin: 0;
+      padding: 0;
+      font-size: 1.1rem;
+      overflow-wrap: anywhere;
+    }
+
+    .card-scene.landscape .qr-frame {
+      grid-column: 2;
+      grid-row: 1 / 4;
+      width: min(120px, 100%);
+      height: auto;
+      aspect-ratio: 1;
+      padding: 8px;
+      margin: 0;
+    }
+
+    .card-scene.landscape .card-table {
+      grid-column: 1;
+      grid-row: 3;
+      margin: 0;
+    }
+
+    .card-scene.landscape .tap-instruction {
+      grid-column: 1 / -1;
+      grid-row: 4;
+      align-self: end;
+      font-size: 0.55rem;
+      letter-spacing: 1px;
+    }
+
+    .card-scene.landscape .layout-editorial .card-name,
+    .card-scene.landscape .layout-editorial .card-table,
+    .card-scene.landscape .layout-editorial .tap-instruction {
+      justify-self: start;
     }
     
     .qr-frame {
@@ -741,10 +883,17 @@
         width: 260px;
         height: 420px;
       }
+
+      .card-scene.landscape {
+        width: min(480px, 100%);
+        height: auto;
+        aspect-ratio: 8 / 5;
+      }
     }
     
     @media (max-width: 640px) {
       .card-scene { width: 240px; height: 380px; }
+      .card-scene.landscape { width: min(100%, 420px); height: auto; aspect-ratio: 8 / 5; }
       .card-name { font-size: 1.2rem; }
       .reservini-name { font-size: 1.6rem; }
     }
@@ -836,13 +985,27 @@
           </div>
         </div>
 
+        <div class="section">
+          <div class="section-title">02 — Format de la carte</div>
+          <div class="orientation-options" role="group" aria-label="Orientation de la carte">
+            <button type="button" class="orientation-option active" data-orientation="portrait" aria-pressed="true">
+              <span class="orientation-icon" aria-hidden="true"></span>
+              <span>Verticale</span>
+            </button>
+            <button type="button" class="orientation-option" data-orientation="landscape" aria-pressed="false">
+              <span class="orientation-icon" aria-hidden="true"></span>
+              <span>Horizontale</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Branding -->
         <div class="section">
-          <div class="section-title">02 — Identité</div>
+          <div class="section-title">03 — Identité et mise en page</div>
           
           <div class="form-group">
             <label>Nom du restaurant</label>
-            <input type="text" id="input-restaurant" value="Café Lumière" placeholder="Votre établissement">
+            <input type="text" id="input-restaurant" maxlength="60" placeholder="Ex. Café Lumière" required>
           </div>
 
           <div class="form-group">
@@ -858,18 +1021,35 @@
               <option value="mono">Machine (Mono)</option>
             </select>
           </div>
+
+          <div class="form-group">
+            <label for="select-branding">À la place du logo</label>
+            <select id="select-branding">
+              <option value="logo">Afficher mon logo</option>
+              <option value="initial">Afficher l'initiale du restaurant</option>
+              <option value="name">Afficher le nom du restaurant</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="select-layout">Disposition</label>
+            <select id="select-layout">
+              <option value="centered">Classique — centrée</option>
+              <option value="editorial">Éditoriale — alignée à gauche</option>
+            </select>
+          </div>
         </div>
 
         <!-- Logo -->
         <div class="section">
-          <div class="section-title">03 — Logo</div>
+          <div class="section-title">04 — Votre logo</div>
           <div class="logo-upload" id="logo-upload">
             <input type="file" id="input-logo" accept="image/png, image/jpeg, image/svg+xml" style="display: none;">
             <div id="logo-upload-content">
               <div class="logo-upload-icon">⬆</div>
               <div class="logo-upload-text">
                 <strong>Cliquez pour uploader</strong><br>
-                PNG, JPG (max 5MB)
+                PNG, JPG ou SVG (max 2MB)
               </div>
             </div>
           </div>
@@ -941,9 +1121,10 @@
           <div class="section-title">Quantité</div>
           <div class="quantity-stepper">
             <button class="qty-btn" id="qty-minus">−</button>
-            <input type="number" class="qty-input" id="input-quantity" value="10" min="1">
+            <input type="number" class="qty-input" id="input-quantity" value="5" min="5" step="1" inputmode="numeric">
             <button class="qty-btn" id="qty-plus">+</button>
           </div>
+          <p id="minimum-quantity-note" style="font-size: 0.75rem; color: var(--color-text-dim); margin-top: 0.5rem;">Minimum : 5 cartes personnalisées.</p>
         </div>
 
         <!-- Price Breakdown -->
@@ -959,6 +1140,10 @@
           <div class="summary-row">
             <span class="label">Style</span>
             <span class="value" id="summary-template">Noir Mauve</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Format</span>
+            <span class="value" id="summary-orientation">Verticale · Classique</span>
           </div>
           <div class="summary-row">
             <span class="label">Personnalisation</span>
@@ -1013,7 +1198,9 @@
 
     // 1. Détecter le type de produit depuis l'URL
     const urlParams = new URLSearchParams(window.location.search);
-    const productType = urlParams.get('type') || 'card-only';
+    const requestedProductType = urlParams.get('type');
+    const productType = requestedProductType === 'full-pack' ? 'full-pack' : 'card-only';
+    const minimumQuantity = productType === 'card-only' ? 5 : 1;
     
     const PRICING = {
       'card-only': { base: 10, label: 'Carte NFC + QR' },
@@ -1022,19 +1209,21 @@
 
     // 2. État initial
     const state = {
-    productType: productType,
-    // ✅ NOUVEAU : On utilise les SLUGS EXACTS de la base de données
-    productId: productType === 'card-only' ? 'carte-nfc-qr' : 'pack-complet', 
-    basePrice: PRICING[productType].base,
-    template: 'noir',
-    restaurantName: 'Café Lumière',
-    tableNumber: '08',
-    font: 'serif',
-    logoData: null,
-    logoName: null,
-    quantity: productType === 'card-only' ? 10 : 1,
-    side: 'front'
-  };
+      productType,
+      productId: productType === 'card-only' ? 'carte-nfc-qr' : 'pack-complet',
+      basePrice: PRICING[productType].base,
+      template: 'noir',
+      orientation: urlParams.get('orientation') === 'landscape' ? 'landscape' : 'portrait',
+      layout: 'centered',
+      branding: 'logo',
+      restaurantName: '',
+      tableNumber: '08',
+      font: 'serif',
+      logoData: null,
+      logoName: null,
+      quantity: productType === 'card-only' ? 5 : 1,
+      side: 'front'
+    };
 
     const TEMPLATES = {
       noir: { name: 'Noir Mauve', className: 'template-noir', price: 0 },
@@ -1050,6 +1239,8 @@
       inputRestaurant: document.getElementById('input-restaurant'),
       inputTable: document.getElementById('input-table'),
       selectFont: document.getElementById('select-font'),
+      selectBranding: document.getElementById('select-branding'),
+      selectLayout: document.getElementById('select-layout'),
       inputQty: document.getElementById('input-quantity'),
       inputLogo: document.getElementById('input-logo'),
       logoUpload: document.getElementById('logo-upload'),
@@ -1063,6 +1254,8 @@
       priceBreakdown: document.getElementById('price-breakdown'),
       qtyMinus: document.getElementById('qty-minus'),
       qtyPlus: document.getElementById('qty-plus'),
+      cardScene: document.getElementById('card-scene'),
+      cardFrontContent: document.querySelector('.card-front-content'),
       cardName: document.getElementById('card-name'),
       cardTableNumber: document.getElementById('card-table-number'),
       cardLogo: document.getElementById('card-logo'),
@@ -1073,7 +1266,20 @@
     if (els.inputRestaurant) els.inputRestaurant.value = state.restaurantName;
     if (els.inputTable) els.inputTable.value = state.tableNumber;
     if (els.inputQty) els.inputQty.value = state.quantity;
+    if (els.inputQty) els.inputQty.min = minimumQuantity;
     if (els.selectFont) els.selectFont.value = state.font;
+    if (els.selectBranding) els.selectBranding.value = state.branding;
+    if (els.selectLayout) els.selectLayout.value = state.layout;
+    const minimumNote = document.getElementById('minimum-quantity-note');
+    if (minimumNote && productType === 'full-pack') {
+      minimumNote.textContent = 'Minimum : 1 pack.';
+    }
+
+    document.querySelectorAll('.orientation-option').forEach(button => {
+      const isSelected = button.dataset.orientation === state.orientation;
+      button.classList.toggle('active', isSelected);
+      button.setAttribute('aria-pressed', String(isSelected));
+    });
 
     // 5. Fonction de mise à jour de la prévisualisation
     function updatePreview() {
@@ -1082,17 +1288,34 @@
       // Mise à jour des classes pour le style
       if (els.cardFront) els.cardFront.className = `card-face card-front ${template.className}`;
       if (els.cardBack) els.cardBack.className = `card-face card-back ${template.className}`;
+      if (els.cardScene) els.cardScene.classList.toggle('landscape', state.orientation === 'landscape');
+      if (els.cardFrontContent) els.cardFrontContent.classList.toggle('layout-editorial', state.layout === 'editorial');
 
       // Mise à jour du texte
       if (els.cardName) els.cardName.textContent = state.restaurantName || 'Nom du Restaurant';
       if (els.cardTableNumber) els.cardTableNumber.textContent = state.tableNumber || '00';
+      if (els.cardName) els.cardName.hidden = state.branding === 'name';
+      if (els.cardName) {
+        els.cardName.style.fontFamily = state.font === 'serif'
+          ? 'var(--font-serif)'
+          : state.font === 'mono' ? 'monospace' : 'var(--font-sans)';
+      }
 
-      // Mise à jour du logo
+      // Afficher le logo, l'initiale ou le nom du restaurant à sa place.
       if (els.cardLogo) {
-        if (state.logoData) {
-          els.cardLogo.innerHTML = `<img src="${state.logoData}" alt="Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;">`;
+        els.cardLogo.classList.toggle('brand-name', state.branding === 'name');
+        if (state.branding === 'name') {
+          els.cardLogo.textContent = state.restaurantName || 'Votre restaurant';
+        } else if (state.branding === 'logo' && state.logoData) {
+          const image = document.createElement('img');
+          image.src = state.logoData;
+          image.alt = `Logo ${state.restaurantName || 'du restaurant'}`;
+          els.cardLogo.replaceChildren(image);
         } else {
-          els.cardLogo.innerHTML = `<span class="card-logo-placeholder">${(state.restaurantName || 'R').charAt(0).toUpperCase()}</span>`;
+          const initial = document.createElement('span');
+          initial.className = 'card-logo-placeholder';
+          initial.textContent = (state.restaurantName || 'R').charAt(0).toUpperCase();
+          els.cardLogo.replaceChildren(initial);
         }
       }
 
@@ -1104,6 +1327,10 @@
       if (els.summaryBase) els.summaryBase.textContent = `${unitPrice.toFixed(2).replace('.', ',')} DT`;
       if (els.summaryQty) els.summaryQty.textContent = `× ${state.quantity}`;
       if (els.summaryTemplate) els.summaryTemplate.textContent = `${productLabel} · ${template.name}`;
+      const orientationSummary = document.getElementById('summary-orientation');
+      if (orientationSummary) {
+        orientationSummary.textContent = `${state.orientation === 'landscape' ? 'Horizontale' : 'Verticale'} · ${state.layout === 'editorial' ? 'Éditoriale' : 'Classique'}`;
+      }
       if (els.summaryTotal) els.summaryTotal.textContent = `${total.toFixed(2).replace('.', ',')} DT`;
       if (els.priceBreakdown) els.priceBreakdown.textContent = `${unitPrice.toFixed(2).replace('.', ',')} DT × ${state.quantity} ${state.productType === 'card-only' ? 'carte(s)' : 'pack(s)'}`;
     }
@@ -1126,26 +1353,56 @@
     if (els.selectFont) {
       els.selectFont.addEventListener('change', (e) => {
         state.font = e.target.value;
-        if (els.cardName) {
-            els.cardName.style.fontFamily = state.font === 'serif' ? 'var(--font-serif)' : (state.font === 'mono' ? 'monospace' : 'var(--font-sans)');
-        }
+        updatePreview();
       });
     }
 
+    if (els.selectBranding) {
+      els.selectBranding.addEventListener('change', (event) => {
+        state.branding = event.target.value;
+        updatePreview();
+      });
+    }
+
+    if (els.selectLayout) {
+      els.selectLayout.addEventListener('change', (event) => {
+        state.layout = event.target.value;
+        updatePreview();
+      });
+    }
+
+    document.querySelectorAll('.orientation-option').forEach(button => {
+      button.addEventListener('click', () => {
+        state.orientation = button.dataset.orientation;
+        document.querySelectorAll('.orientation-option').forEach(option => {
+          const selected = option === button;
+          option.classList.toggle('active', selected);
+          option.setAttribute('aria-pressed', String(selected));
+        });
+        updatePreview();
+      });
+    });
+
     if (els.inputQty) {
       els.inputQty.addEventListener('input', (e) => {
-        state.quantity = parseInt(e.target.value) || 1;
+        const quantity = Number.parseInt(e.target.value, 10);
+        if (Number.isSafeInteger(quantity) && quantity >= minimumQuantity) {
+          state.quantity = quantity;
+        }
+        updatePreview();
+      });
+      els.inputQty.addEventListener('change', () => {
+        state.quantity = Math.max(minimumQuantity, Number.parseInt(els.inputQty.value, 10) || minimumQuantity);
+        els.inputQty.value = state.quantity;
         updatePreview();
       });
     }
 
     if (els.qtyMinus) {
       els.qtyMinus.addEventListener('click', () => {
-        if (state.quantity > 1) {
-          state.quantity--;
-          if (els.inputQty) els.inputQty.value = state.quantity;
-          updatePreview();
-        }
+        state.quantity = Math.max(minimumQuantity, state.quantity - 1);
+        if (els.inputQty) els.inputQty.value = state.quantity;
+        updatePreview();
       });
     }
 
@@ -1177,8 +1434,15 @@
         const file = e.target.files[0];
         if (!file) return;
 
-        if (file.size > 5 * 1024 * 1024) {
-          showToast('Fichier trop volumineux (max 5MB)', 'error');
+        if (file.size > 2 * 1024 * 1024) {
+          showToast('Fichier trop volumineux (max 2MB)', 'error');
+          els.inputLogo.value = '';
+          return;
+        }
+
+        if (!['image/png', 'image/jpeg', 'image/svg+xml'].includes(file.type)) {
+          showToast('Format non pris en charge. Utilisez PNG, JPG ou SVG.', 'error');
+          els.inputLogo.value = '';
           return;
         }
 
@@ -1213,6 +1477,13 @@
     // 7. Ajouter au panier
     if (els.btnAddToCart) {
       els.btnAddToCart.addEventListener('click', async () => {
+        state.restaurantName = els.inputRestaurant.value.trim();
+        if (!state.restaurantName) {
+          showToast('Ajoutez le nom de votre restaurant avant de continuer.', 'error');
+          els.inputRestaurant.focus();
+          return;
+        }
+
         els.btnAddToCart.disabled = true;
         els.btnAddToCart.innerHTML = '<span class="spinner"></span> Ajout...';
 
@@ -1228,6 +1499,9 @@
               customizationData: {
                 template: state.template,
                 templateName: template.name,
+                orientation: state.orientation,
+                layout: state.layout,
+                branding: state.branding,
                 restaurantName: state.restaurantName,
                 tableNumber: state.tableNumber,
                 font: state.font,

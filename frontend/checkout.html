@@ -108,6 +108,7 @@
       display: flex; align-items: center; justify-content: center;
       font-family: var(--font-serif); font-style: italic; color: var(--color-mauve-dark);
     }
+    .item-thumb.landscape { width: 80px; height: 50px; }
     .item-name { font-weight: 500; margin-bottom: 0.2rem; }
     .item-meta { font-size: 0.8rem; color: var(--color-text-dim); }
     .item-price { font-family: var(--font-serif); font-weight: 600; font-size: 1.1rem; }
@@ -409,6 +410,13 @@
     // 2. State
     let cartData = null;
     let currentStep = 1;
+    const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (character) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    })[character]);
     
     // 3. Load Cart
     async function loadCart() {
@@ -448,25 +456,32 @@
           
           const custom = item.customizationData || {};
           const style = templateStyles[custom.template] || templateStyles.noir;
-          const meta = `${custom.templateName || 'Standard'} · Table ${custom.tableNumber || '-'}`;
-          
-          // On affiche le logo s'il existe, sinon la 1ère lettre du nom
-          const logoHtml = custom.logoData 
-            ? `<img src="${custom.logoData}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">` 
-            : `<span style="font-family: var(--font-serif); font-style: italic; font-size: 1.2rem;">${(custom.restaurantName || 'R').charAt(0)}</span>`;
+          const restaurantName = escapeHtml(custom.restaurantName || item.product.name);
+          const orientation = custom.orientation === 'landscape' ? 'landscape' : 'portrait';
+          const orientationLabel = orientation === 'landscape' ? 'Horizontale' : 'Verticale';
+          const meta = `${escapeHtml(custom.templateName || 'Standard')} · ${orientationLabel} · Table ${escapeHtml(custom.tableNumber || '-')}`;
+          const logoData = typeof custom.logoData === 'string' &&
+            /^data:image\/(?:png|jpeg|svg\+xml);base64,[A-Za-z0-9+/=]+$/.test(custom.logoData)
+            ? custom.logoData
+            : null;
+          const brandHtml = custom.branding === 'name'
+            ? `<span>${restaurantName}</span>`
+            : custom.branding === 'logo' && logoData
+              ? `<img src="${logoData}" alt="" style="width: 30px; height: 30px; border-radius: 50%; object-fit: contain;">`
+              : `<span style="font-family: var(--font-serif); font-style: italic; font-size: 1.2rem;">${escapeHtml((custom.restaurantName || 'R').charAt(0))}</span>`;
 
           return `
             <div class="checkout-item">
               <div class="item-info">
-                <div class="item-thumb" style="${style}">
-                  ${logoHtml}
+                <div class="item-thumb ${orientation}" style="${style}">
+                  ${brandHtml}
                 </div>
                 <div>
-                  <div class="item-name">${custom.restaurantName || item.product.name}</div>
-                  <div class="item-meta">${meta} · Qté: ${item.quantity}</div>
+                  <div class="item-name">${restaurantName}</div>
+                  <div class="item-meta">${meta} · Qté: ${escapeHtml(item.quantity)}</div>
                 </div>
               </div>
-              <div class="item-price">${total.toFixed(2)} DT</div>
+              <div class="item-price">${escapeHtml(total.toFixed(2))} DT</div>
             </div>
           `;
         }).join('');
@@ -479,8 +494,8 @@
           
           return `
             <div class="summary-row" style="font-size: 0.85rem;">
-              <span>${item.quantity}× ${custom.restaurantName || item.product.name}</span>
-              <span>${total.toFixed(2)} DT</span>
+              <span>${item.quantity}× ${escapeHtml(custom.restaurantName || item.product.name)}</span>
+              <span>${escapeHtml(total.toFixed(2))} DT</span>
             </div>
           `;
         }).join('');

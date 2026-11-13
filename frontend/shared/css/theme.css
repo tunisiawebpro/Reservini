@@ -611,6 +611,16 @@ h1, h2, h3, h4 {
     overflow-y: auto;
   }
 
+  body .user-badge {
+    max-width: 9rem;
+  }
+
+  body .user-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   body .auth-page::before {
     width: min(85vw, 350px);
     height: min(85vw, 350px);

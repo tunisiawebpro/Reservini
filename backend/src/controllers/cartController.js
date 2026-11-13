@@ -31,6 +31,10 @@ export const addToCart = async (req, res) => {
   try {
     const { productId, variantId, quantity, customizationData } = req.body;
 
+    if (!Number.isSafeInteger(quantity) || quantity < 1) {
+      return res.status(400).json({ error: 'Quantity must be a positive whole number.' });
+    }
+
     // 🔍 Recherche robuste : d'abord par id, puis par slug
     // (le frontend studio envoie un slug comme productId)
     let product = await prisma.product.findUnique({
@@ -48,30 +52,37 @@ export const addToCart = async (req, res) => {
       return res.status(404).json({ error: 'Product not found or inactive.' });
     }
 
-    if (product.stock < quantity) {
-      return res.status(400).json({ error: 'Insufficient stock.' });
-    }
-
     let cart = await prisma.cart.findUnique({
       where: { userId: req.user.id },
       include: { items: true },
     });
 
+    const requestedCustomization = customizationData || {};
+    const existingItem = cart?.items.find(item =>
+      item.productId === product.id &&
+      item.variantId === (variantId || null) &&
+      JSON.stringify(item.customizationData || {}) === JSON.stringify(requestedCustomization)
+    );
+    const resultingQuantity = (existingItem?.quantity || 0) + quantity;
+
+    if (product.slug === 'carte-nfc-qr' && resultingQuantity < 5) {
+      return res.status(400).json({ error: 'La commande minimum est de 5 cartes.' });
+    }
+
+    if (product.stock < resultingQuantity) {
+      return res.status(400).json({ error: 'Insufficient stock.' });
+    }
+
     if (!cart) {
       cart = await prisma.cart.create({ data: { userId: req.user.id }, include: { items: true } });
     }
-
-    const existingItem = cart.items.find(item =>
-      item.productId === product.id &&
-      item.variantId === (variantId || null)
-    );
 
     if (existingItem) {
       await prisma.cartItem.update({
         where: { id: existingItem.id },
         data: {
           quantity: existingItem.quantity + quantity,
-          customizationData: customizationData || existingItem.customizationData
+          customizationData: requestedCustomization
         }
       });
     } else {
@@ -81,7 +92,7 @@ export const addToCart = async (req, res) => {
           productId: product.id,
           variantId: variantId || null,
           quantity,
-          customizationData: customizationData || {},
+          customizationData: requestedCustomization,
         }
       });
     }
