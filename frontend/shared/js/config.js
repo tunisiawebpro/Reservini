@@ -1,1 +1,1 @@
-export const API_BASE_URL = 'https://printed-adjustable-cancelled-films.trycloudflare.com/api/v1';
+export const API_BASE_URL = 'https://personals-surveys-spectrum-lawsuit.trycloudflare.com/api/v1';
